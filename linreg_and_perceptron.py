@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 smth = np.load('ex1_data.npz')
 
@@ -121,12 +122,46 @@ def plot_perceptron(data, target, xMin, xMax, figureNo):
 	plt.figure(figureNo)
 	plt.plot(perceptronX, perceptronY, 'b-')
 
+def faster_plot_perceptron(data, target, xMin, xMax, figureNo):
+	plot_points(data, target, figureNo)
 
+	perceptronX = []
+	perceptronY = []
+
+	# estimate initial weight by help of linear regression to speed up perceptron
+	initial_w = np.dot(np.linalg.pinv(data),target);
+
+	# find the hyperplane splitting the data, starting from w = [0,0,0]
+	# and iteratively improving until all data is correctly split
+	w = perceptron(data, target, initial_w)
+
+	# solve w0*x0 + w1*x1 + w2*x2 = 0 for x2 gives
+	# x2 = -(w0 + w1*x1)/w2
+	# f(x) = -w0/w2 - w1/w2 * x
+	b = -w[0]/w[2]
+	a = -w[1]/w[2]
+
+	perceptronX.append(xMin)
+	perceptronY.append(a*xMin+b)
+	perceptronX.append(xMax)
+	perceptronY.append(a*xMax+b)
+
+	plt.figure(figureNo)
+	plt.plot(perceptronX, perceptronY, 'b-')
 
 plot_perceptron(dat1, target1, 0, 1, 1)
 # plot_perceptron(dat2, target2, 0, 200, 2)
 # plot_perceptron(dat3, target3, 0, 200, 3)
+
+# start = time.clock()
 # plot_perceptron(dat4, target4, 0, 200, 4)
+# end = time.clock()
+# print "Original perceptron algorithm: ", end - start
+# start = time.clock()
+# faster_plot_perceptron(dat4, target4, 0, 200, 5)
+# end = time.clock()
+# print "Faster perceptron algorithm: ", end - start
+
 plot_linear_regression(dat1, target1, 0, 1, 2)
 # plot_linear_regression(dat2, target2, 0, 200, 2)
 # plot_linear_regression(dat3, target3, 0, 200, 3)
