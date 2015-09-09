@@ -106,7 +106,7 @@ def plot_perceptron(data, target, xMin, xMax, figureNo):
 	# filtering out x0 = 1 as we don't want to plot this
 	# data_filtered = [[i[1], i[2]] for i in data]
 	
-	# plot_points(data_filtered, target, figureNo)
+	# plot_points(data, target, figureNo)
 
 	perceptronX = []
 	perceptronY = []
