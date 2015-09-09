@@ -24,22 +24,26 @@ def plot_points(data, target, figureNo):
 	redY = []
 
 	# filtering out x0 = 1 as we don't want to plot this
-	data_filtered = [[i[1], i[2]] for i in data]
+	# data_filtered = [[i[1], i[2]] for i in data]
 
 	for idx, val in enumerate(target):
 		if (target[idx] == 1):
-			greenX.append(data_filtered[idx][0])
-			greenY.append(data_filtered[idx][1])
+			greenX.append(data[idx][0])
+			greenY.append(data[idx][1])
 		else:
-			redX.append(data_filtered[idx][0])
-			redY.append(data_filtered[idx][1])
+			redX.append(data[idx][0])
+			redY.append(data[idx][1])
 	plt.figure(figureNo)
 	plt.plot(redX, redY, 'ro', greenX, greenY, 'gv')
 
 
 def plot_linear_regression(data, target, xMin, xMax, figureNo):
+
+	# filtering out x0 = 1 as we don't want to plot this
+	data_filtered = [[i[1], i[2]] for i in data]
+
 	# plot the data
-	plot_points(data, target, figureNo)
+	plot_points(data_filtered, target, figureNo)
 
 	regressionX = []
 	regressionY = []
@@ -72,8 +76,6 @@ def h(x, w):
 
 
 def perceptron(argx, argtarget, argw):
-	print argx
-	print argw
 	w = argw
 	while(True):
 		current_classifications = []
@@ -101,7 +103,10 @@ def perceptron(argx, argtarget, argw):
 
 def plot_perceptron(data, target, xMin, xMax, figureNo):
 
-	plot_points(data, target, figureNo)
+	# filtering out x0 = 1 as we don't want to plot this
+	# data_filtered = [[i[1], i[2]] for i in data]
+	
+	# plot_points(data_filtered, target, figureNo)
 
 	perceptronX = []
 	perceptronY = []
@@ -122,10 +127,13 @@ def plot_perceptron(data, target, xMin, xMax, figureNo):
 	perceptronY.append(a*xMax+b)
 
 	plt.figure(figureNo)
-	plt.plot(perceptronX, perceptronY, 'b-')
+	plt.plot(perceptronX, perceptronY, 'b-', linewidth=2)
 
 def faster_plot_perceptron(data, target, xMin, xMax, figureNo):
-	plot_points(data, target, figureNo)
+	# filtering out x0 = 1 as we don't want to plot this
+	data_filtered = [[i[1], i[2]] for i in data]
+
+	plot_points(data_filtered, target, figureNo)
 
 	perceptronX = []
 	perceptronY = []
@@ -151,7 +159,9 @@ def faster_plot_perceptron(data, target, xMin, xMax, figureNo):
 	plt.figure(figureNo)
 	plt.plot(perceptronX, perceptronY, 'b-')
 
-plot_perceptron(dat1, target1, 0, 1, 1)
+
+
+# plot_perceptron(dat1, target1, 0, 1, 1)
 # plot_perceptron(dat2, target2, 0, 200, 2)
 # plot_perceptron(dat3, target3, 0, 200, 3)
 
@@ -164,10 +174,10 @@ plot_perceptron(dat1, target1, 0, 1, 1)
 # end = time.clock()
 # print "Faster perceptron algorithm: ", end - start
 
-plot_linear_regression(dat1, target1, 0, 1, 2)
+# plot_linear_regression(dat1, target1, 0, 1, 2)
 # plot_linear_regression(dat2, target2, 0, 200, 2)
 # plot_linear_regression(dat3, target3, 0, 200, 3)
 # plot_linear_regression(dat4, target4, 0, 200, 4)
 
-plt.show()
+# plt.show()
 
