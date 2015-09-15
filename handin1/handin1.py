@@ -41,7 +41,7 @@ def approximate_gradient(f, x, eps):
 # prints 20.0 as expected
 
 
-def log_cost(X, Y, theta):
+def log_cost(X, y, theta):
 	def logistic_func(z):
 		return 1 / (1 + np.exp(-z))
 
@@ -53,24 +53,34 @@ def log_cost(X, Y, theta):
 
 	fn_cost = lambda X, Y, theta: -np.sum([y * np.log(h(theta, x)) 
 		+ (1 - y) * np.log(1 - h(theta, x)) for x,y in zip(X,Y)])
-	gradient = np.dot(np.transpose(-X), (Y - logistic_func(np.dot(X, theta))))
+	gradient = np.dot(np.transpose(-X), (y - logistic_func(np.dot(X, theta))))
 	return fn_cost, gradient
 
+def log_grad(X, y, theta):
+	# initialize w(0) and v(0)
+	w = theta
+	v = np.zeros(1)
+	my = 0.000000001
+	current_cost = 1000000
+	t = 0
+	# for t in range(0, 1000):
+	while current_cost > 100:
+		# pull gradient
+		costfn, gradient = log_cost(X, y, w)
+		current_cost = costfn(X, y, w)
+		print str(t) + ": " + str(current_cost)
+		v = -(gradient)
+		# v = -(gradient)/np.linalg.norm(gradient)
+		# my = my * np.linalg.norm(gradient)
+		w = w + my * v
+		t += 1
+	return w
 
-X = np.array([[1,2,3],
-			  [1,2,3],
-			  [1,2,3],
-			  [1,2,3],
-			  [1,2,3],
-			  [1,2,3]])
-Y = np.array([7,3,9,0,4,2])
-theta = np.array([2,2,1])
 
-costfn, gradient = log_cost(X, Y, theta)
-# print type(costfn)
-# print type(gradient)
-# print costfn(X, Y, theta)
-# print gradient
+labels = np.array(labels.T)[0]
+
+print "final weight: " + str(log_grad(images, labels, np.zeros(images[0].shape[0])))
+
 
 
 
