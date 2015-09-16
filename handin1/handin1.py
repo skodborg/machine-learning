@@ -77,7 +77,7 @@ def log_grad(X, y, theta):
 		old_cost = current_cost
 		current_cost = costfn(X, y, w)
 		costImprovement = ((old_cost - current_cost) / old_cost) * 100
-		print str(t) + ": " + str(current_cost) + "  diff: " + str(costImprovement)
+		# print str(t) + ": " + str(current_cost) + "  diff: " + str(costImprovement)
 		v = -(gradient)
 		w = w + my * v
 		t += 1
@@ -125,5 +125,5 @@ def classifyDigits():
 
 
 
-classifyDigits()
+# classifyDigits()
 
