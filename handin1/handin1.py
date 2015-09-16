@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import his_ex2 as ex2
-import linreg_and_perceptron as lp
 import math
 
 datafile = np.load('mnistTrain.npz')
