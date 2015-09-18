@@ -22,7 +22,7 @@ def softmax(x):
 		# x is a K-dimensional vector, K = 10
 		max_x = np.amax(x)
 		expsum = np.sum(np.exp(x - max_x))
-		return [np.exp(xi - (max_x + np.log(expsum))) for xi in x]
+		return np.array([np.exp(xi - (max_x + np.log(expsum))) for xi in x])
 
 def soft_cost(X, Y, theta):
 	# K is classifiers 0-9, i.e. 10
@@ -31,9 +31,23 @@ def soft_cost(X, Y, theta):
 	# theta is (d+1,K)
 
 	def fn_cost(X, Y, theta):
+		# lol = -np.sum(np.dot(Y, np.log(softmax(np.dot(X, theta).T))))
+		print X.shape
+		print Y.shape
+		lol = np.log(softmax(np.dot(X, theta).T)).T
+		print np.dot(lol, Y.T)
+		# print softmax((np.dot(X, theta))).shape
+		# print softmax((np.dot(X, theta).T)).shape
+		# print Y.shape
+
+
 		costsum = 0.0
 		for i in range(0, X.shape[0]):
 			costsum += np.dot(Y[i], np.log(softmax(np.dot(theta.T, X[i]))))
+
+		print str(-costsum)
+
+		print "difference: " + str(lol+costsum)
 		return -costsum
 
 	gradient = -np.dot(X.T, Y - softmax(np.dot(X, theta)))
@@ -85,21 +99,31 @@ def classifyDigits():
 	initY = convert_labels(labels)	
 	initTheta = np.zeros(785*10).reshape(785,10)
 	initTheta[:,0] = 1
+
 	print "running soft_run"
 	start = time.clock()
 	learnedThetas = soft_run(initX, initY, initTheta)
 	end = time.clock()
 	print "finished in " + str(end-start) + " seconds"
-	np.savez("softmax_learnedThetas_st1_cl01.npz", theta=learnedThetas)
+	np.savez("softmax_matrixOps_learnedThetas_st1_cl01.npz", theta=learnedThetas)
 
 
 
-initY = convert_labels(traininglabels)
-initX = append_ones_column_first(trainingimgs)
-initTheta = np.zeros(785*10).reshape(785,10)
-initTheta[:,0] = 1
+# initY = convert_labels(traininglabels)
+# initX = append_ones_column_first(trainingimgs)
+# initTheta = np.zeros(785*10).reshape(785,10)
+# initTheta[:,:] = 0.00000001
+# initTheta[:,0] = 1
 
-classifyDigits()
+# classifyDigits()
+
+# someX = np.array([0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9]).reshape(10,3)
+
+# print softmax(someX.T)[0]
+# print softmax(someX)[1]
+# print softmax(someX)[2]
+# print softmax(someX)[9]
+
 
 def recognizeNumber(image, thetas):
 	image = np.r_[1, image]
@@ -124,10 +148,93 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 	return errors
 
 
-# myThetas = np.load("softmax_learnedThetas_st05_cl001.npz")['theta']
+# myThetas = np.load("softmax_learnedThetas_st1_cl01.npz")['theta']
 # compare(0, 10000, myThetas, testimages, testlabels)
 
 
 
-print softmax(np.array([0,1,1,0,0,0,0,0,0,0]))
+
+
+
+
+
+
+
+
+datafile = np.load('mnistTrain.npz')
+
+labels = np.squeeze(datafile['labels'])
+images = datafile['images']
+
+
+def softmax(x):
+	# x is a K-dimensional vector, K = 10
+
+	# OPFOERER DEN SIG KORREKT??
+	# Tager vi amax og expsum for hele matricen x,
+	# og udregner derefter noget per indgang i for-loekken??
+	# burde den nogensinde give rent 0? (problem med ln senere, ln(0) = -Inf)
+	max_x = np.amax(x)
+	expsum = np.sum(np.exp(x - max_x))
+	return np.array([np.exp(xi - (max_x + np.log(expsum))) for xi in x])
+
+def wtf(X, Y, theta):
+	print X.shape
+	print Y.shape
+	print theta.shape
+	tmp = np.dot(X, theta).T
+	tmp = softmax(tmp)
+	print tmp
+	tmp = np.log(tmp)
+	tmp = np.dot(Y, tmp)
+	tmp = -np.sum(tmp)
+	lol = (1.0 / X.shape[0]) * tmp
+	# lol = np.log(softmax(np.dot(X, theta).T)).T
+	# print np.dot(lol, Y.T)
+	# print softmax((np.dot(X, theta))).shape
+	# print softmax((np.dot(X, theta).T)).shape
+	# print Y.shape
+
+	costsum = 0.0
+	for i in range(0, X.shape[0]):
+		costsum += np.dot(Y[i], np.log(softmax(np.dot(theta.T, X[i]))))
+
+	costsum = (1.0 / X.shape[0]) * (-costsum)
+	print str(costsum)
+	print str(lol)
+
+	print "difference: " + str(lol-costsum)
+	# lol = np.log(softmax(np.dot(X, theta).T)).T
+	# print "will print"
+	# print np.dot(lol, Y.T)
+	# print "will not print"
+
+print "STARTING"
+# initX = append_ones_column_first(images)
+# initY = convert_labels(labels)	
+# initTheta = np.zeros(785*10).reshape(785,10)
+# initTheta[:,0] = 1
+
+wtf_param = 48
+initX = np.c_[np.ones(wtf_param), np.arange(wtf_param * 4).reshape(wtf_param,4)]
+# print initX.shape
+initY = np.arange(wtf_param * 2).reshape(wtf_param, 2)
+# print initY.shape
+initTheta = np.zeros(10).reshape(5,2)
+initTheta[:,0] = 1
+# print initTheta.shape
+
+wtf(initX, initY, initTheta)
+print "STOPPING"
+
+
+
+
+
+
+
+
+
+
+
 
