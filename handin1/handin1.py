@@ -65,16 +65,16 @@ def h(theta, x):
 	return logistic_func(weight_sum(theta, x))
 
 
-theta0 = np.load('st_05_cl_001_learnedTheta_digit_0.npz')['theta']
-theta1 = np.load('st_05_cl_001_learnedTheta_digit_1.npz')['theta']
-theta2 = np.load('st_05_cl_001_learnedTheta_digit_2.npz')['theta']
-theta3 = np.load('st_05_cl_001_learnedTheta_digit_3.npz')['theta']
-theta4 = np.load('st_05_cl_001_learnedTheta_digit_4.npz')['theta']
-theta5 = np.load('st_05_cl_001_learnedTheta_digit_5.npz')['theta']
-theta6 = np.load('st_05_cl_001_learnedTheta_digit_6.npz')['theta']
-theta7 = np.load('st_05_cl_001_learnedTheta_digit_7.npz')['theta']
-theta8 = np.load('st_05_cl_001_learnedTheta_digit_8.npz')['theta']
-theta9 = np.load('st_05_cl_001_learnedTheta_digit_9.npz')['theta']
+theta0 = np.load('unreg_cl_001_learnedTheta_digit_0.npz')['theta']
+theta1 = np.load('unreg_cl_001_learnedTheta_digit_1.npz')['theta']
+theta2 = np.load('unreg_cl_001_learnedTheta_digit_2.npz')['theta']
+theta3 = np.load('unreg_cl_001_learnedTheta_digit_3.npz')['theta']
+theta4 = np.load('unreg_cl_001_learnedTheta_digit_4.npz')['theta']
+theta5 = np.load('unreg_cl_001_learnedTheta_digit_5.npz')['theta']
+theta6 = np.load('unreg_cl_001_learnedTheta_digit_6.npz')['theta']
+theta7 = np.load('unreg_cl_001_learnedTheta_digit_7.npz')['theta']
+theta8 = np.load('unreg_cl_001_learnedTheta_digit_8.npz')['theta']
+theta9 = np.load('unreg_cl_001_learnedTheta_digit_9.npz')['theta']
 thetas = [theta0, theta1, theta2, theta3, theta4, theta5, theta6, theta7, theta8, theta9]
 
 # np.savez("all_vs_ones_weights.npz", thetas=thetas)
@@ -99,12 +99,6 @@ def recognizeTwos(image, theta):
 	if (prob > 0.5):
 		result = 1.0
 	return prob, result
-
-
-# for i in range(0,10):
-# 	visualize_image(i, images)
-# 	print "prediction: " + str(recognizeNumber(images[i], thetas))
-# 	plt.show()
 
 
 def approximate_gradient(f, x, eps):
@@ -151,7 +145,7 @@ def log_cost(X, y, theta, lambda_i):
 def log_grad(X, y, theta, lambda_i):
 	w = theta
 	v = np.zeros(1)
-	my = 0.05
+	my = 0.025
 	costImprovLimit = 0.001
 	current_cost = 1000000.0
 	costImprovement = 1.0
@@ -225,8 +219,8 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 	errors = 0
 	errorpairs = []
 	for i in range(start_idx, start_idx+nr_tests):
-		# prob, guess = recognizeNumber(images[i], thetas)
-		prob, guess = recognizeTwos(images[i], thetas)
+		prob, guess = recognizeNumber(images[i], thetas)
+		# prob, guess = recognizeTwos(images[i], thetas)
 		label = labels[i]
 		if (guess != label):
 			errors += 1
@@ -237,8 +231,6 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 	pct_error = (float(errors)/nr_tests)*100
 	print "error pct: {0:.0f}%".format(pct_error)
 	return errors
-
-# compare(0,10000, thetas, testimages, testlabels)
 
 # results:
 # for lambda = 3^i  i = {-6, ..., 5}
@@ -290,8 +282,6 @@ def learnTwosVsSevens():
 	print "out-of-sample error on validation set:"
 	compare(0, validationimgs.shape[0], np.array([best_theta]), validationimgs, validationlabels)
 
-# learnTwosVsSevens()
-
 
 def plotAlVsOnesWeights():
 	thetas = np.load('all_vs_ones_weights.npz')['thetas']
@@ -299,16 +289,27 @@ def plotAlVsOnesWeights():
 		plt.imshow(np.rot90(theta[1:,].reshape(28,28)))
 		plt.show()
 
-# plotAlVsOnesWeights()
 
 def classifyDigits():
-	for i in range(0,10):
+	for i in range(7,8):
 		print "learning digit " + str(i)
 		start = time.clock()
 		learnedTheta = findThetaForClassifier(i, -35, images, labels)
 		end = time.clock()
 		print "learned in " + str(end-start) + " seconds"
-		np.savez("newest_st_05_cl_001_learnedTheta_digit_"+str(i)+".npz", theta=learnedTheta)
+		np.savez("unreg_cl_001_learnedTheta_digit_"+str(i)+".npz", theta=learnedTheta)
 
+
+# for i in range(0,10):
+# 	visualize_image(i, images)
+# 	print "prediction: " + str(recognizeNumber(images[i], thetas))
+# 	plt.show()
+
+# # in-sample
+# compare(0, 60000, thetas, images, labels)
+# # out-of-sample
+# compare(0, 10000, thetas, testimages, testlabels)
+
+# learnTwosVsSevens()
+# plotAlVsOnesWeights()
 # classifyDigits()
-
