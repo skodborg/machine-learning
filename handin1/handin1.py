@@ -60,55 +60,55 @@ def convert_labels(y):
 def append_ones_column_first(X):
 	return np.c_[np.ones(X.shape[0]), X]
 
-def soft_cost(X, Y, theta):
+def soft_cost(X, Y, theta, useRegularization=False, lambda_i=0):
 	fn_cost = -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
 	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta))))
 	return fn_cost, gradient
 
-def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
-	w = theta
-	my = 0.2
-	current_cost = 100000000.0
-	costImprovLimit = 0.001
-	costImprovement = 1.0
-	iters = []
-	costs = []
-	t = 0
-	# interactive plotting as we progress
-	plt.ion()
-	plt.show()
-	for t in range(0, 1000):
-	# while costImprovement > costImprovLimit:
-		costfn, gradient = soft_cost(X, Y, w)
-		gradient = (1.0 / X.shape[0]) * gradient
-		old_cost = current_cost
-		current_cost = (1.0 / X.shape[0]) * costfn
-		# plot cost per iteration
-		costs.append(current_cost)
-		iters.append(t)
+# def old_soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
+# 	w = theta
+# 	my = 0.2
+# 	current_cost = 100000000.0
+# 	costImprovLimit = 0.001
+# 	costImprovement = 1.0
+# 	iters = []
+# 	costs = []
+# 	t = 0
+# 	# interactive plotting as we progress
+# 	plt.ion()
+# 	plt.show()
+# 	for t in range(0, 1000):
+# 	# while costImprovement > costImprovLimit:
+# 		costfn, gradient = soft_cost(X, Y, w)
+# 		gradient = (1.0 / X.shape[0]) * gradient
+# 		old_cost = current_cost
+# 		current_cost = (1.0 / X.shape[0]) * costfn
+# 		# plot cost per iteration
+# 		costs.append(current_cost)
+# 		iters.append(t)
 
-		if (old_cost < current_cost):
-			print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
-			print "cost at: " + str(current_cost)
-			# plot costs per iteration
-			# if (current_cost > 0.15):
-				# plt.plot(iters, costs, 'r-')
-				# plt.show()
-			return w
-		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
+# 		if (old_cost < current_cost):
+# 			print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
+# 			print "cost at: " + str(current_cost)
+# 			# plot costs per iteration
+# 			# if (current_cost > 0.15):
+# 				# plt.plot(iters, costs, 'r-')
+# 				# plt.show()
+# 			return w
+# 		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
 		
-		print str(t) + ": " + str(current_cost) + " diff: " + str(costImprovement)
+# 		print str(t) + ": " + str(current_cost) + " diff: " + str(costImprovement)
 
-		v = -(gradient)
-		w = w + my * v
+# 		v = -(gradient)
+# 		w = w + my * v
 
-		# interactive plotting as we progress
-		plt.plot(iters, costs, 'r-')
-		plt.draw()
-		if (t % 100 == 0):
-			compare(0, validationimgs.shape[0], w, validationimgs, validationlabels)
-		t += 1
-	return w
+# 		# interactive plotting as we progress
+# 		plt.plot(iters, costs, 'r-')
+# 		plt.draw()
+# 		if (t % 100 == 0):
+# 			compare(0, validationimgs.shape[0], w, validationimgs, validationlabels)
+# 		t += 1
+# 	return w
 
 
 def logistic_func(z):
@@ -127,11 +127,19 @@ def recognizeNumber(image, thetas):
 	mostLikelyDigit = 0
 	for i in range(0,10):
 		currTheta = thetas[i]
+		print currTheta.shape
+		print image.shape
 		prob = h(currTheta, image)
 		if (prob > maxProb):
 			maxProb = prob
 			mostLikelyDigit = i
 	return maxProb, mostLikelyDigit
+
+def recognizeNumber_softmax(image, thetas):
+	image = np.r_[1, image]
+	probs = softmax(np.dot(thetas.T, image))
+	mostLikelyDigit = np.argmax(probs)
+	return probs, mostLikelyDigit
 
 def recognizeTwos(image, theta):
 	image = np.r_[1, image]
@@ -178,6 +186,9 @@ def log_grad(X, y, theta, lambda_i=0, useRegularization=False, plotWeights=False
 	stepSize = 0.1
 	return gradient_descent(X, y, theta, log_cost, lambda_i, useRegularization, plotWeights, plotCosts, stepSize)
 
+def soft_run(X, Y, theta, lambda_i=0, useRegularization=False, plotWeights=False, plotCosts=False):
+	stepSize = 0.05
+	return gradient_descent(X, Y, theta, soft_cost, lambda_i, useRegularization, plotWeights, plotCosts, stepSize)
 
 def gradient_descent(X, y, theta, fn_cost, lambda_i, useRegularization, plotWeights, plotCosts, stepSize):
 	w = theta
@@ -264,12 +275,14 @@ def findThetaForClassifier(digit, lambda_i, images, labels, useRegularization=Fa
 
 
 
-def compare(start_idx, nr_tests, thetas, images, labels, only2vs7=False):
+def compare(start_idx, nr_tests, thetas, images, labels, only2vs7=False, softmax=False):
 	errors = 0
 	errorpairs = []
 	for i in range(start_idx, start_idx+nr_tests):
 		if (only2vs7):
 			prob, guess = recognizeTwos(images[i], thetas)
+		elif (softmax):
+			prob, guess = recognizeNumber_softmax(images[i], thetas)
 		else:
 			prob, guess = recognizeNumber(images[i], thetas)
 		label = labels[i]
@@ -333,7 +346,7 @@ def plotAlVsOnesWeights():
 		plt.show()
 
 
-def classifyDigits():
+def classifyDigits(images, labels):
 	thetas = []
 	for i in range(0,10):
 		print "learning digit " + str(i)
@@ -344,6 +357,15 @@ def classifyDigits():
 		print "learned in " + str(end-start) + " seconds"
 		# np.savez("reg_-7_cl_001_learnedTheta_digit_"+str(i)+".npz", theta=learnedTheta)
 	return thetas
+
+def classifyDigits_softmax(images, labels):
+	theta = np.zeros(images.shape[1]*labels.shape[1]).reshape(images.shape[1], labels.shape[1])
+	print "running soft_run"
+	start = time.clock()
+	learnedThetas = soft_run(images, labels, theta)
+	end = time.clock()
+	print "finished in " + str(end-start) + " seconds"
+	return learnedThetas
 
 
 def load_and_estimate_errors():
@@ -361,17 +383,21 @@ def load_and_estimate_errors():
 	aulbls = autraindatafile['labels']
 
 	unreg_thetas = np.load('unreg_all_vs_ones_weights.npz')['thetas']
-	print "MNIST in-sample error:"
-	compare(0, images.shape[0], unreg_thetas, images, labels)
-	print "MNIST out-of-sample error (using test set):"
-	compare(0, testimages.shape[0], unreg_thetas, testimages, testlabels)
+	# print "MNIST in-sample error:"
+	# compare(0, images.shape[0], unreg_thetas, images, labels)
+	# print "MNIST out-of-sample error (using test set):"
+	# compare(0, testimages.shape[0], unreg_thetas, testimages, testlabels)
 	
-	print "\nauDigits 2 vs 7 in-sample and out-of-sample"
-	learnTwosVsSevens()
+	# print "\nauDigits 2 vs 7 in-sample and out-of-sample"
+	# learnTwosVsSevens()
 
-	someDigit = 3
-	print "\nPlot of weight on auDigits for digit " + str(someDigit) + " after 5 iterations"
-	findThetaForClassifier(someDigit, 0, auimgs, aulbls, plotWeights=True)
+	# someDigit = 3
+	# print "\nPlot of weight on auDigits for digit " + str(someDigit) + " after 5 iterations"
+	# findThetaForClassifier(someDigit, 0, auimgs, aulbls, plotWeights=True)
+	
+	print "Running softmax on auDigits"
+	myThetas = classifyDigits_softmax(append_ones_column_first(auimgs), convert_labels(aulbls))
+	compare(0, auimgs.shape[0], myThetas, auimgs, aulbls, softmax=True)
 
 
 if __name__ == "__main__":
