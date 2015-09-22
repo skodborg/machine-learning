@@ -36,13 +36,13 @@ def append_ones_column_first(X):
 	return np.c_[np.ones(X.shape[0]), X]
 
 def soft_cost(X, Y, theta):
-	fn_cost = lambda X, Y, theta: -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
+	fn_cost = -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
 	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta))))
 	return fn_cost, gradient
 
 def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
 	w = theta
-	my = 0.05
+	my = 0.2
 	current_cost = 100000000.0
 	costImprovLimit = 0.001
 	costImprovement = 1.0
@@ -52,12 +52,12 @@ def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
 	# interactive plotting as we progress
 	plt.ion()
 	plt.show()
-	# for t in range(0, 200):
-	while costImprovement > costImprovLimit:
+	for t in range(0, 1000):
+	# while costImprovement > costImprovLimit:
 		costfn, gradient = soft_cost(X, Y, w)
 		gradient = (1.0 / X.shape[0]) * gradient
 		old_cost = current_cost
-		current_cost = (1.0 / X.shape[0]) * costfn(X, Y, w)
+		current_cost = (1.0 / X.shape[0]) * costfn
 		# plot cost per iteration
 		costs.append(current_cost)
 		iters.append(t)
@@ -72,7 +72,7 @@ def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
 			return w
 		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
 		
-		# print str(t) + ": " + str(current_cost)
+		print str(t) + ": " + str(current_cost) + " diff: " + str(costImprovement)
 
 		v = -(gradient)
 		w = w + my * v
@@ -80,6 +80,8 @@ def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
 		# interactive plotting as we progress
 		plt.plot(iters, costs, 'r-')
 		plt.draw()
+		if (t % 100 == 0):
+			compare(0, validationimgs.shape[0], w, validationimgs, validationlabels)
 		t += 1
 	return w
 
@@ -99,49 +101,6 @@ def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
 # myYs = convert_labels(autrainlabels)
 # myTheta = np.zeros(myXs.shape[1]*myYs.shape[1]).reshape(myXs.shape[1], myYs.shape[1])
 # soft_run(myXs, myYs, myTheta)
-
-
-
-
-
-
-
-def classifyDigits(X, Y, theta):
-	# initX = append_ones_column_first(images)
-	# initY = convert_labels(labels)	
-	# initTheta = np.zeros(785*10).reshape(785,10)
-	# initTheta[:,0] = 1
-
-	print "running soft_run"
-	start = time.clock()
-	learnedThetas = soft_run(X, Y, theta)
-	end = time.clock()
-	print "finished in " + str(end-start) + " seconds"
-	np.savez("softmax_matrixOps_learnedThetas_st1_cl01.npz", theta=learnedThetas)
-
-def training_validation_split(aSetImgs, aSetLabels, ratio):
-	comb = np.c_[aSetImgs, aSetLabels]
-	np.random.shuffle(comb)
-	validation_size = aSetImgs.shape[0]/ratio
-	training_size = aSetImgs.shape[0] - validation_size
-	training_set = comb[0:training_size,:]
-	validation_set = comb[training_size:aSetImgs.shape[0],:]
-
-	training_imgs = training_set[:,0:training_set.shape[1]-1]
-	validation_imgs = validation_set[:,0:validation_set.shape[1]-1]
-
-	training_labels = training_set[:,training_set.shape[1]-1]
-	validation_labels = validation_set[:,validation_set.shape[1]-1]
-	return training_imgs, validation_imgs, training_labels, validation_labels
-
-trainingimgs, validationimgs, traininglabels, validationlabels = training_validation_split(autrainimages, autrainlabels, 5)
-
-initY = convert_labels(traininglabels)
-initX = append_ones_column_first(trainingimgs)
-initTheta = np.zeros(785*10).reshape(785,10)
-initTheta[:,0] = 1
-
-classifyDigits(initX, initY, initTheta)
 
 
 
@@ -170,6 +129,49 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 
 
 
+def classifyDigits(X, Y, theta):
+	# initX = append_ones_column_first(images)
+	# initY = convert_labels(labels)	
+	# initTheta = np.zeros(785*10).reshape(785,10)
+	# initTheta[:,0] = 1
 
-myThetas = np.load("softmax_matrixOps_learnedThetas_st1_cl01.npz")['theta']
+	print "running soft_run"
+	start = time.clock()
+	learnedThetas = soft_run(X, Y, theta)
+	end = time.clock()
+	print "finished in " + str(end-start) + " seconds"
+	np.savez("st_2_softmax_learnedThetas.npz", theta=learnedThetas)
+
+def training_validation_split(aSetImgs, aSetLabels, ratio):
+	comb = np.c_[aSetImgs, aSetLabels]
+	np.random.shuffle(comb)
+	validation_size = aSetImgs.shape[0]/ratio
+	training_size = aSetImgs.shape[0] - validation_size
+	training_set = comb[0:training_size,:]
+	validation_set = comb[training_size:aSetImgs.shape[0],:]
+
+	training_imgs = training_set[:,0:training_set.shape[1]-1]
+	validation_imgs = validation_set[:,0:validation_set.shape[1]-1]
+
+	training_labels = training_set[:,training_set.shape[1]-1]
+	validation_labels = validation_set[:,validation_set.shape[1]-1]
+	return training_imgs, validation_imgs, training_labels, validation_labels
+
+trainingimgs, validationimgs, traininglabels, validationlabels = training_validation_split(autrainimages, autrainlabels, 5)
+
+initY = convert_labels(traininglabels)
+initX = append_ones_column_first(trainingimgs)
+initTheta = np.zeros(785*10).reshape(785,10)
+initTheta[:,0] = 1
+
+classifyDigits(initX, initY, initTheta)
+
+
+
+
+
+
+
+
+myThetas = np.load("st_2_softmax_learnedThetas.npz")['theta']
 compare(0, validationimgs.shape[0], myThetas, validationimgs, validationlabels)

@@ -4,27 +4,6 @@ import math
 import time
 import random
 
-# datafile = np.load('mnistTrain.npz')
-# testdatafile = np.load('mnistTest.npz')
-# autraindatafile = np.load('auTrainMerged.npz')
-
-# labels = np.squeeze(datafile['labels'])
-# images = datafile['images']
-
-# testlabels = np.squeeze(testdatafile['labels'])
-# testimages = testdatafile['images']
-
-# autrainlabels = autraindatafile['labels']
-# autrainimages = autraindatafile['digits']
-
-# pos_auTwos = (autrainlabels == 2)
-# pos_auSevens = (autrainlabels == 7)
-# auTwos = autrainimages[pos_auTwos]
-# auSevens = autrainimages[pos_auSevens]
-# auTwosSevens = np.concatenate([auTwos, auSevens])
-# auTwosSevensLabels = np.concatenate([np.ones(auTwos.shape[0]), np.zeros(auSevens.shape[0])])
-
-
 def training_validation_split(aSetImgs, aSetLabels, ratio):
 	comb = np.c_[aSetImgs, aSetLabels]
 	np.random.shuffle(comb)
@@ -54,6 +33,83 @@ def visualize_image(imageidx, images):
 	# plotting
 	plt.pcolormesh(x, y, image)
 
+# operates on a vector
+def softmax(x):
+	max_x = np.amax(x)
+	expsum = np.sum(np.exp(x - max_x))
+	return np.exp(x - (max_x + np.log(expsum)))
+
+# applies softmax(x) on each vector in matrix-argument X
+def matrix_softmax(X):
+	result = []
+	for x in X:
+		result.append(softmax(x))
+	return np.array(result)
+
+# takes a list of digit labels, returns a matrix of 
+# size (n, K) with 1's on indexes corresponding to labels in input y
+def convert_labels(y):
+	classifiers = 10
+	# create zero-filled Y
+	Y = np.zeros(y.shape[0]*classifiers).reshape(y.shape[0],classifiers)
+	# fill in indexes corresponding to labels
+	for i in range(0,y.shape[0]):
+		Y[i,y[i]] = 1
+	return Y
+
+def append_ones_column_first(X):
+	return np.c_[np.ones(X.shape[0]), X]
+
+def soft_cost(X, Y, theta):
+	fn_cost = -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
+	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta))))
+	return fn_cost, gradient
+
+def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
+	w = theta
+	my = 0.2
+	current_cost = 100000000.0
+	costImprovLimit = 0.001
+	costImprovement = 1.0
+	iters = []
+	costs = []
+	t = 0
+	# interactive plotting as we progress
+	plt.ion()
+	plt.show()
+	for t in range(0, 1000):
+	# while costImprovement > costImprovLimit:
+		costfn, gradient = soft_cost(X, Y, w)
+		gradient = (1.0 / X.shape[0]) * gradient
+		old_cost = current_cost
+		current_cost = (1.0 / X.shape[0]) * costfn
+		# plot cost per iteration
+		costs.append(current_cost)
+		iters.append(t)
+
+		if (old_cost < current_cost):
+			print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
+			print "cost at: " + str(current_cost)
+			# plot costs per iteration
+			# if (current_cost > 0.15):
+				# plt.plot(iters, costs, 'r-')
+				# plt.show()
+			return w
+		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
+		
+		print str(t) + ": " + str(current_cost) + " diff: " + str(costImprovement)
+
+		v = -(gradient)
+		w = w + my * v
+
+		# interactive plotting as we progress
+		plt.plot(iters, costs, 'r-')
+		plt.draw()
+		if (t % 100 == 0):
+			compare(0, validationimgs.shape[0], w, validationimgs, validationlabels)
+		t += 1
+	return w
+
 
 def logistic_func(z):
 	return 1 / (1 + np.exp(-z))
@@ -63,21 +119,6 @@ def weight_sum(theta, x):
 
 def h(theta, x):
 	return logistic_func(weight_sum(theta, x))
-
-
-# theta0 = np.load('reg_-7_cl_001_learnedTheta_digit_0.npz')['theta']
-# theta1 = np.load('reg_-7_cl_001_learnedTheta_digit_1.npz')['theta']
-# theta2 = np.load('reg_-7_cl_001_learnedTheta_digit_2.npz')['theta']
-# theta3 = np.load('reg_-7_cl_001_learnedTheta_digit_3.npz')['theta']
-# theta4 = np.load('reg_-7_cl_001_learnedTheta_digit_4.npz')['theta']
-# theta5 = np.load('reg_-7_cl_001_learnedTheta_digit_5.npz')['theta']
-# theta6 = np.load('reg_-7_cl_001_learnedTheta_digit_6.npz')['theta']
-# theta7 = np.load('reg_-7_cl_001_learnedTheta_digit_7.npz')['theta']
-# theta8 = np.load('reg_-7_cl_001_learnedTheta_digit_8.npz')['theta']
-# theta9 = np.load('reg_-7_cl_001_learnedTheta_digit_9.npz')['theta']
-# thetas = [theta0, theta1, theta2, theta3, theta4, theta5, theta6, theta7, theta8, theta9]
-
-# np.savez("reg_-7_all_vs_ones_weights.npz", thetas=thetas)
 
 
 def recognizeNumber(image, thetas):
@@ -105,16 +146,7 @@ def approximate_gradient(f, x, eps):
 	return (f(x+eps) - f(x-eps))/(2*eps)
 
 
-def log_cost(X, y, theta, lambda_i, useRegularization=False):
-	def logistic_func(z):
-		return 1 / (1 + np.exp(-z))
-
-	def weight_sum(theta, x):
-		return np.dot(np.transpose(theta), x)
-
-	def h(theta, x):
-		return logistic_func(weight_sum(theta, x))
-
+def log_cost(X, y, theta, lambda_i=0, useRegularization=False):
 	if (useRegularization):
 		# regularization using weight decay as regularizer and a varying parameter, 
 		# given by 3 to the power of lambda_i   (3^i * wTw)
@@ -126,15 +158,15 @@ def log_cost(X, y, theta, lambda_i, useRegularization=False):
 		regularization_param_derivative = 0
 
 	# ------------- cost function including regularization --------------------
-	fn_cost = lambda X, Y, theta: (-np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
-		+ (1 - y) * np.log(1 - logistic_func(np.dot(X, theta))))) + regularization_param
+	fn_cost = -np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
+		+ (1 - y) * np.log(1 - logistic_func(np.dot(X, theta)))) + regularization_param
 
 	# ------------- cost function using matrix operations (faster) ------------
-	# fn_cost = lambda X, Y, theta: -np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
+	# fn_cost = -np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
 	# 	+ (1 - y) * np.log(1 - logistic_func(np.dot(X, theta))))
 
 	# ------------- cost function using a for-loop ----------------------------
-	# fn_cost = lambda X, Y, theta: -np.sum([y * np.log(h(theta, x)) 
+	# fn_cost = -np.sum([y * np.log(h(theta, x)) 
 	# 	+ (1 - y) * np.log(1 - h(theta, x)) for x,y in zip(X,Y)])
 
 	gradient = np.dot(np.transpose(-X), 
@@ -142,30 +174,34 @@ def log_cost(X, y, theta, lambda_i, useRegularization=False):
 	return fn_cost, gradient
 
 
-def log_grad(X, y, theta, lambda_i=0, useRegularization=False, plotWeights=False):
+def log_grad(X, y, theta, lambda_i=0, useRegularization=False, plotWeights=False, plotCosts=False):
+	stepSize = 0.1
+	return gradient_descent(X, y, theta, log_cost, lambda_i, useRegularization, plotWeights, plotCosts, stepSize)
+
+
+def gradient_descent(X, y, theta, fn_cost, lambda_i, useRegularization, plotWeights, plotCosts, stepSize):
 	w = theta
-	v = np.zeros(1)
-	my = 0.1
+	my = stepSize
 	costImprovLimit = 0.001
 	current_cost = 1000000.0
 	costImprovement = 1.0
 	t = 0
 
 	# plot cost per iteration as we go
-	# plt.ion()
-	# plt.show()
-	# iters = []
-	# costs = []
+	if (plotCosts):
+		plt.figure(0)
+		plt.ion()
+		plt.show()
+		iters = []
+		costs = []
 
 	# for t in range(0, 500):
 	while costImprovement > costImprovLimit:
-		costfn, gradient = log_cost(X, y, w, lambda_i, useRegularization)
+		costfn, gradient = fn_cost(X, y, w, lambda_i, useRegularization)
 		gradient = (1.0 / X.shape[0]) * gradient
 		old_cost = current_cost
-		current_cost = (1.0 / X.shape[0]) * costfn(X, y, w)
-		# plot cost per iteration as we go
-		# costs.append(current_cost)
-		# iters.append(t)
+		current_cost = (1.0 / X.shape[0]) * costfn
+		
 		if (old_cost < current_cost):
 			# print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
 			# print "cost at: " + str(current_cost)
@@ -180,14 +216,19 @@ def log_grad(X, y, theta, lambda_i=0, useRegularization=False, plotWeights=False
 		w = w + my * v
 		# plot weight after 5 iterations
 		if (t == 5 and plotWeights):
+			plt.figure(1)
 			plt.imshow(w[1:,].reshape(28,28))
 			plt.show()
+			plt.figure(0)
 		# plot cost per iteration as we go
-		# plt.plot(iters, costs, 'r-')
-		# plt.draw()
+		if (plotCosts):
+			costs.append(current_cost)
+			iters.append(t)
+			plt.plot(iters, costs, 'r-')
+			plt.draw()
 		t += 1
 	# print "Finished, returning gradient at a cost improvement of " + format(costImprovement, '.17f')
-	return w
+	return w	
 
 
 def findThetaForClassifier(digit, lambda_i, images, labels, useRegularization=False, plotWeights=False):
@@ -280,9 +321,9 @@ def learnTwosVsSevens():
 	# best_theta = np.load("params.npz")['theta']
 	# np.savez("params.npz", theta=best_theta)
 	print "in-sample error on training set:"
-	compare(0, trainingimgs.shape[0], np.array([best_theta]), trainingimgs, traininglabels, True)
+	compare(0, trainingimgs.shape[0], best_theta, trainingimgs, traininglabels, True)
 	print "out-of-sample error on validation set:"
-	compare(0, validationimgs.shape[0], np.array([best_theta]), validationimgs, validationlabels, True)
+	compare(0, validationimgs.shape[0], best_theta, validationimgs, validationlabels, True)
 
 
 def plotAlVsOnesWeights():
