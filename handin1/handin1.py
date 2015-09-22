@@ -4,25 +4,25 @@ import math
 import time
 import random
 
-datafile = np.load('mnistTrain.npz')
-testdatafile = np.load('mnistTest.npz')
-autraindatafile = np.load('auTrainMerged.npz')
+# datafile = np.load('mnistTrain.npz')
+# testdatafile = np.load('mnistTest.npz')
+# autraindatafile = np.load('auTrainMerged.npz')
 
-labels = np.squeeze(datafile['labels'])
-images = datafile['images']
+# labels = np.squeeze(datafile['labels'])
+# images = datafile['images']
 
-testlabels = np.squeeze(testdatafile['labels'])
-testimages = testdatafile['images']
+# testlabels = np.squeeze(testdatafile['labels'])
+# testimages = testdatafile['images']
 
-autrainlabels = autraindatafile['labels']
-autrainimages = autraindatafile['digits']
+# autrainlabels = autraindatafile['labels']
+# autrainimages = autraindatafile['digits']
 
-pos_auTwos = (autrainlabels == 2)
-pos_auSevens = (autrainlabels == 7)
-auTwos = autrainimages[pos_auTwos]
-auSevens = autrainimages[pos_auSevens]
-auTwosSevens = np.concatenate([auTwos, auSevens])
-auTwosSevensLabels = np.concatenate([np.ones(auTwos.shape[0]), np.zeros(auSevens.shape[0])])
+# pos_auTwos = (autrainlabels == 2)
+# pos_auSevens = (autrainlabels == 7)
+# auTwos = autrainimages[pos_auTwos]
+# auSevens = autrainimages[pos_auSevens]
+# auTwosSevens = np.concatenate([auTwos, auSevens])
+# auTwosSevensLabels = np.concatenate([np.ones(auTwos.shape[0]), np.zeros(auSevens.shape[0])])
 
 
 def training_validation_split(aSetImgs, aSetLabels, ratio):
@@ -52,7 +52,7 @@ def visualize_image(imageidx, images):
 	image = np.rot90(np.reshape(np.array(image), (28,28)))
 	# image = np.reshape(np.array(image), (28,28)).T
 	# plotting
-	plt.pcolormesh(x, y, image, cmap=plt.cm.gray)
+	plt.pcolormesh(x, y, image)
 
 
 def logistic_func(z):
@@ -65,19 +65,19 @@ def h(theta, x):
 	return logistic_func(weight_sum(theta, x))
 
 
-theta0 = np.load('unreg_cl_001_learnedTheta_digit_0.npz')['theta']
-theta1 = np.load('unreg_cl_001_learnedTheta_digit_1.npz')['theta']
-theta2 = np.load('unreg_cl_001_learnedTheta_digit_2.npz')['theta']
-theta3 = np.load('unreg_cl_001_learnedTheta_digit_3.npz')['theta']
-theta4 = np.load('unreg_cl_001_learnedTheta_digit_4.npz')['theta']
-theta5 = np.load('unreg_cl_001_learnedTheta_digit_5.npz')['theta']
-theta6 = np.load('unreg_cl_001_learnedTheta_digit_6.npz')['theta']
-theta7 = np.load('unreg_cl_001_learnedTheta_digit_7.npz')['theta']
-theta8 = np.load('unreg_cl_001_learnedTheta_digit_8.npz')['theta']
-theta9 = np.load('unreg_cl_001_learnedTheta_digit_9.npz')['theta']
-thetas = [theta0, theta1, theta2, theta3, theta4, theta5, theta6, theta7, theta8, theta9]
+# theta0 = np.load('reg_-7_cl_001_learnedTheta_digit_0.npz')['theta']
+# theta1 = np.load('reg_-7_cl_001_learnedTheta_digit_1.npz')['theta']
+# theta2 = np.load('reg_-7_cl_001_learnedTheta_digit_2.npz')['theta']
+# theta3 = np.load('reg_-7_cl_001_learnedTheta_digit_3.npz')['theta']
+# theta4 = np.load('reg_-7_cl_001_learnedTheta_digit_4.npz')['theta']
+# theta5 = np.load('reg_-7_cl_001_learnedTheta_digit_5.npz')['theta']
+# theta6 = np.load('reg_-7_cl_001_learnedTheta_digit_6.npz')['theta']
+# theta7 = np.load('reg_-7_cl_001_learnedTheta_digit_7.npz')['theta']
+# theta8 = np.load('reg_-7_cl_001_learnedTheta_digit_8.npz')['theta']
+# theta9 = np.load('reg_-7_cl_001_learnedTheta_digit_9.npz')['theta']
+# thetas = [theta0, theta1, theta2, theta3, theta4, theta5, theta6, theta7, theta8, theta9]
 
-# np.savez("all_vs_ones_weights.npz", thetas=thetas)
+# np.savez("reg_-7_all_vs_ones_weights.npz", thetas=thetas)
 
 
 def recognizeNumber(image, thetas):
@@ -105,7 +105,7 @@ def approximate_gradient(f, x, eps):
 	return (f(x+eps) - f(x-eps))/(2*eps)
 
 
-def log_cost(X, y, theta, lambda_i):
+def log_cost(X, y, theta, lambda_i, useRegularization=False):
 	def logistic_func(z):
 		return 1 / (1 + np.exp(-z))
 
@@ -115,17 +115,18 @@ def log_cost(X, y, theta, lambda_i):
 	def h(theta, x):
 		return logistic_func(weight_sum(theta, x))
 
-	# regularization using weight decay as regularizer and a varying parameter, 
-	# given by 3 to the power of lambda_i   (3^i * wTw)
-	lmb = 3
-	# regularization_param = (lmb**lambda_i) * np.sum(theta[1:,]**2)
-	# regularization_param = (lmb**lambda_i) * np.dot(theta[1:,].T, theta[1:,])
-	regularization_param = 0
-	# regularization_param_derivative = (lmb**lambda_i) * np.sum(2 * theta[1:,])
-	regularization_param_derivative = 0
+	if (useRegularization):
+		# regularization using weight decay as regularizer and a varying parameter, 
+		# given by 3 to the power of lambda_i   (3^i * wTw)
+		lmb = 3
+		regularization_param = (lmb**lambda_i) * np.sum(theta[1:,]**2)
+		regularization_param_derivative = (lmb**lambda_i) * np.sum(2 * theta[1:,])
+	else:
+		regularization_param = 0
+		regularization_param_derivative = 0
 
 	# ------------- cost function including regularization --------------------
-	fn_cost = lambda X, Y, theta: (1.0 / X.shape[0]) * (-np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
+	fn_cost = lambda X, Y, theta: (-np.sum(y * np.log(logistic_func(np.dot(X, theta))) 
 		+ (1 - y) * np.log(1 - logistic_func(np.dot(X, theta))))) + regularization_param
 
 	# ------------- cost function using matrix operations (faster) ------------
@@ -136,53 +137,60 @@ def log_cost(X, y, theta, lambda_i):
 	# fn_cost = lambda X, Y, theta: -np.sum([y * np.log(h(theta, x)) 
 	# 	+ (1 - y) * np.log(1 - h(theta, x)) for x,y in zip(X,Y)])
 
-	# gradient = np.dot(np.transpose(-X), (y - logistic_func(np.dot(X, theta))))
-	gradient = (1.0 / X.shape[0]) * np.dot(np.transpose(-X), 
+	gradient = np.dot(np.transpose(-X), 
 		(y - logistic_func(np.dot(X, theta)))) + regularization_param_derivative
 	return fn_cost, gradient
 
 
-def log_grad(X, y, theta, lambda_i):
+def log_grad(X, y, theta, lambda_i=0, useRegularization=False, plotWeights=False):
 	w = theta
 	v = np.zeros(1)
-	my = 0.025
+	my = 0.1
 	costImprovLimit = 0.001
 	current_cost = 1000000.0
 	costImprovement = 1.0
 	t = 0
-	iters = []
-	costs = []
-	# for t in range(0, 10000):
+
+	# plot cost per iteration as we go
+	# plt.ion()
+	# plt.show()
+	# iters = []
+	# costs = []
+
+	# for t in range(0, 500):
 	while costImprovement > costImprovLimit:
-		costfn, gradient = log_cost(X, y, w, lambda_i)
+		costfn, gradient = log_cost(X, y, w, lambda_i, useRegularization)
+		gradient = (1.0 / X.shape[0]) * gradient
 		old_cost = current_cost
-		current_cost = costfn(X, y, w)
-		# plot cost per iteration
+		current_cost = (1.0 / X.shape[0]) * costfn(X, y, w)
+		# plot cost per iteration as we go
 		# costs.append(current_cost)
 		# iters.append(t)
 		if (old_cost < current_cost):
-			print "OUCH! increased cost, returning current weight with latest cost impr. of " + str(costImprovement)
+			# print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
+			# print "cost at: " + str(current_cost)
 			# plot costs per iteration
-			# plt.plot(iters, costs, 'r-')
-			# plt.show()
+			# if (current_cost > 0.15):
+				# plt.plot(iters, costs, 'r-')
+				# plt.show()
 			return w
 		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
 		# print str(t) + ": " + str(current_cost) + "  diff: " + str(costImprovement)
 		v = -(gradient)/np.linalg.norm(gradient)
 		w = w + my * v
 		# plot weight after 5 iterations
-		# if (t == 5):
-			# plt.imshow(w[1:,].reshape(28,28))
-			# plt.show()
+		if (t == 5 and plotWeights):
+			plt.imshow(w[1:,].reshape(28,28))
+			plt.show()
+		# plot cost per iteration as we go
+		# plt.plot(iters, costs, 'r-')
+		# plt.draw()
 		t += 1
-	print "Finished, returning gradient at a cost improvement of " + format(costImprovement, '.17f')
-	# plot costs per iteration
-	# plt.plot(iters, costs, 'r-')
-	# plt.show()
+	# print "Finished, returning gradient at a cost improvement of " + format(costImprovement, '.17f')
 	return w
 
 
-def findThetaForClassifier(digit, lambda_i, images, labels):
+def findThetaForClassifier(digit, lambda_i, images, labels, useRegularization=False, plotWeights=False):
 	pos_of_digit = (labels == digit)
 	pos_of_others = (labels != digit)
 
@@ -209,18 +217,20 @@ def findThetaForClassifier(digit, lambda_i, images, labels):
 
 	# use logistic gradient descent to minimize errors and return
 	# a learned theta when errors is at a tolerable level
-	learnedTheta = log_grad(inputX, inputY, initTheta, lambda_i)
+	learnedTheta = log_grad(inputX, inputY, initTheta, lambda_i, useRegularization, plotWeights)
 
 	return learnedTheta
 
 
 
-def compare(start_idx, nr_tests, thetas, images, labels):
+def compare(start_idx, nr_tests, thetas, images, labels, only2vs7=False):
 	errors = 0
 	errorpairs = []
 	for i in range(start_idx, start_idx+nr_tests):
-		prob, guess = recognizeNumber(images[i], thetas)
-		# prob, guess = recognizeTwos(images[i], thetas)
+		if (only2vs7):
+			prob, guess = recognizeTwos(images[i], thetas)
+		else:
+			prob, guess = recognizeNumber(images[i], thetas)
 		label = labels[i]
 		if (guess != label):
 			errors += 1
@@ -232,24 +242,6 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 	print "error pct: {0:.0f}%".format(pct_error)
 	return errors
 
-# results:
-# for lambda = 3^i  i = {-6, ..., 5}
-#   best result was 1331 errors for i = -6
-# for lambda = 0
-#   result was 1310 errors
-# for lambda = 2^i  i = {-6, ..., 5}
-#   best result was 1356 errors for i = -5
-# for lambda = 4^i  i = {-6, ..., 5}
-#   best result was 1315 errors for i = -6
-# for lambda = 10^i i = {-6, ..., 5}
-#   best result was 1308 errors for i = -5
-
-# BEST REGULARIZING PARAMETER SO FAR: -35 with 1254 errors on validation set
-# -40 gave 1318 errors
-# -35 & -39 gave 1254 errors
-# -30 gave 1275 errors
-# -100 gave 1298 errors
-# -10 gave 1352 errors
 
 def findBestRegularizedTheta(trainingimgs, validationimgs, traininglabels, validationlabels):
 	validimgs = validationimgs
@@ -258,11 +250,12 @@ def findBestRegularizedTheta(trainingimgs, validationimgs, traininglabels, valid
 	trainlbls = traininglabels
 	best_model = 0
 	lowest_errors = 10000000
+	# for i in [-30, -10, -5, 0, 5, 10, 30]:
 	for i in range(-6,6):
 		thetas = []
 		for j in range(0,10):
 			print "training digit " + str(j) + " with regularization param: " + str(i)
-			currTheta = findThetaForClassifier(j, i, trainimgs, trainlbls)
+			currTheta = findThetaForClassifier(j, i, trainimgs, trainlbls, True)
 			thetas.append(currTheta)
 		curr_error = compare(0, validimgs.shape[0], thetas, validimgs, validlbls)
 		if (curr_error < lowest_errors):
@@ -273,14 +266,23 @@ def findBestRegularizedTheta(trainingimgs, validationimgs, traininglabels, valid
 
 
 def learnTwosVsSevens():
+	# loading relevant data
+	autraindatafile = np.load('auTrainMerged.npz')
+	autrainlabels = autraindatafile['labels']
+	autrainimages = autraindatafile['digits']
+	auTwos = autrainimages[(autrainlabels == 2)]
+	auSevens = autrainimages[(autrainlabels == 7)]
+	auTwosSevens = np.concatenate([auTwos, auSevens])
+	auTwosSevensLabels = np.concatenate([np.ones(auTwos.shape[0]), np.zeros(auSevens.shape[0])])
+
 	trainingimgs, validationimgs, traininglabels, validationlabels = training_validation_split(auTwosSevens, auTwosSevensLabels, 5)
 	best_theta = findThetaForClassifier(1, 1, trainingimgs, traininglabels)
 	# best_theta = np.load("params.npz")['theta']
 	# np.savez("params.npz", theta=best_theta)
 	print "in-sample error on training set:"
-	compare(0, auTwosSevens.shape[0], np.array([best_theta]), auTwosSevens, auTwosSevensLabels)
+	compare(0, trainingimgs.shape[0], np.array([best_theta]), trainingimgs, traininglabels, True)
 	print "out-of-sample error on validation set:"
-	compare(0, validationimgs.shape[0], np.array([best_theta]), validationimgs, validationlabels)
+	compare(0, validationimgs.shape[0], np.array([best_theta]), validationimgs, validationlabels, True)
 
 
 def plotAlVsOnesWeights():
@@ -291,25 +293,45 @@ def plotAlVsOnesWeights():
 
 
 def classifyDigits():
-	for i in range(7,8):
+	thetas = []
+	for i in range(0,10):
 		print "learning digit " + str(i)
 		start = time.clock()
-		learnedTheta = findThetaForClassifier(i, -35, images, labels)
+		learnedTheta = findThetaForClassifier(i, 0, images, labels)
 		end = time.clock()
+		thetas.append(learnedTheta)
 		print "learned in " + str(end-start) + " seconds"
-		np.savez("unreg_cl_001_learnedTheta_digit_"+str(i)+".npz", theta=learnedTheta)
+		# np.savez("reg_-7_cl_001_learnedTheta_digit_"+str(i)+".npz", theta=learnedTheta)
+	return thetas
 
 
-# for i in range(0,10):
-# 	visualize_image(i, images)
-# 	print "prediction: " + str(recognizeNumber(images[i], thetas))
-# 	plt.show()
+def load_and_estimate_errors():
+	datafile = np.load('mnistTrain.npz')
+	testdatafile = np.load('mnistTest.npz')
+	autraindatafile = np.load('auTrainMerged.npz')
 
-# # in-sample
-# compare(0, 60000, thetas, images, labels)
-# # out-of-sample
-# compare(0, 10000, thetas, testimages, testlabels)
+	labels = np.squeeze(datafile['labels'])
+	images = datafile['images']
 
-# learnTwosVsSevens()
-# plotAlVsOnesWeights()
-# classifyDigits()
+	testlabels = np.squeeze(testdatafile['labels'])
+	testimages = testdatafile['images']
+
+	auimgs = autraindatafile['digits']
+	aulbls = autraindatafile['labels']
+
+	unreg_thetas = np.load('unreg_all_vs_ones_weights.npz')['thetas']
+	print "MNIST in-sample error:"
+	compare(0, images.shape[0], unreg_thetas, images, labels)
+	print "MNIST out-of-sample error (using test set):"
+	compare(0, testimages.shape[0], unreg_thetas, testimages, testlabels)
+	
+	print "\nauDigits 2 vs 7 in-sample and out-of-sample"
+	learnTwosVsSevens()
+
+	someDigit = 3
+	print "\nPlot of weight on auDigits for digit " + str(someDigit) + " after 5 iterations"
+	findThetaForClassifier(someDigit, 0, auimgs, aulbls, plotWeights=True)
+
+
+if __name__ == "__main__":
+    load_and_estimate_errors()

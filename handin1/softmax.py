@@ -3,82 +3,23 @@ import matplotlib.pyplot as plt
 import math
 import time
 
-testdatafile = np.load('mnistTest.npz')
+autraindatafile = np.load('auTrainMerged.npz')
 
-testlabels = np.squeeze(testdatafile['labels'])
-testimages = testdatafile['images']
+autrainlabels = autraindatafile['labels']
+autrainimages = autraindatafile['digits']
 
-
-datafile = np.load('mnistTrain.npz')
-
-labels = np.squeeze(datafile['labels'])
-images = datafile['images']
-
-
-trainingimgs = images[0:3,]
-traininglabels = labels[0:3,]
-
+# operates on a vector
 def softmax(x):
-		# x is a K-dimensional vector, K = 10
-		max_x = np.amax(x)
-		expsum = np.sum(np.exp(x - max_x))
-		return np.array([np.exp(xi - (max_x + np.log(expsum))) for xi in x])
+	max_x = np.amax(x)
+	expsum = np.sum(np.exp(x - max_x))
+	return np.exp(x - (max_x + np.log(expsum)))
 
-def soft_cost(X, Y, theta):
-	# K is classifiers 0-9, i.e. 10
-	# X is (n,d+1)
-	# y is (n,K)
-	# theta is (d+1,K)
-
-	def fn_cost(X, Y, theta):
-		# lol = -np.sum(np.dot(Y, np.log(softmax(np.dot(X, theta).T))))
-		print X.shape
-		print Y.shape
-		lol = np.log(softmax(np.dot(X, theta).T)).T
-		print np.dot(lol, Y.T)
-		# print softmax((np.dot(X, theta))).shape
-		# print softmax((np.dot(X, theta).T)).shape
-		# print Y.shape
-
-
-		costsum = 0.0
-		for i in range(0, X.shape[0]):
-			costsum += np.dot(Y[i], np.log(softmax(np.dot(theta.T, X[i]))))
-
-		print str(-costsum)
-
-		print "difference: " + str(lol+costsum)
-		return -costsum
-
-	gradient = -np.dot(X.T, Y - softmax(np.dot(X, theta)))
-	
-	return fn_cost, gradient
-
-
-def soft_run(X, Y, theta):
-	w = theta
-	v = np.zeros(1)
-	my = 0.1
-	current_cost = 10000000000000000.0
-	costImprovLimit = 0.01
-	costImprovement = 1.0
-	t = 0
-	# for t in range(0, 10000):
-	while costImprovement > costImprovLimit:
-		costfn, gradient = soft_cost(X, Y, w)
-		old_cost = current_cost
-		current_cost = costfn(X, Y, w)
-		if (old_cost < current_cost):
-			print "OUCH! increased cost, returning current weight"
-			return w
-		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
-		print str(t) + ": " + str(current_cost) + "  diff: " + str(costImprovement)
-		v = -(gradient)/np.linalg.norm(gradient)
-		w = w + my * v
-		t += 1
-	print "Finished, returning gradient at a cost improvement of " + format(costImprovement, '.17f')
-	return w
-
+# applies softmax(x) on each vector in matrix-argument X
+def matrix_softmax(X):
+	result = []
+	for x in X:
+		result.append(softmax(x))
+	return np.array(result)
 
 # takes a list of digit labels, returns a matrix of 
 # size (n, K) with 1's on indexes corresponding to labels in input y
@@ -94,35 +35,114 @@ def convert_labels(y):
 def append_ones_column_first(X):
 	return np.c_[np.ones(X.shape[0]), X]
 
-def classifyDigits():
-	initX = append_ones_column_first(images)
-	initY = convert_labels(labels)	
-	initTheta = np.zeros(785*10).reshape(785,10)
-	initTheta[:,0] = 1
+def soft_cost(X, Y, theta):
+	fn_cost = lambda X, Y, theta: -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
+	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta))))
+	return fn_cost, gradient
+
+def soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
+	w = theta
+	my = 0.05
+	current_cost = 100000000.0
+	costImprovLimit = 0.001
+	costImprovement = 1.0
+	iters = []
+	costs = []
+	t = 0
+	# interactive plotting as we progress
+	plt.ion()
+	plt.show()
+	# for t in range(0, 200):
+	while costImprovement > costImprovLimit:
+		costfn, gradient = soft_cost(X, Y, w)
+		gradient = (1.0 / X.shape[0]) * gradient
+		old_cost = current_cost
+		current_cost = (1.0 / X.shape[0]) * costfn(X, Y, w)
+		# plot cost per iteration
+		costs.append(current_cost)
+		iters.append(t)
+
+		if (old_cost < current_cost):
+			print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
+			print "cost at: " + str(current_cost)
+			# plot costs per iteration
+			# if (current_cost > 0.15):
+				# plt.plot(iters, costs, 'r-')
+				# plt.show()
+			return w
+		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
+		
+		# print str(t) + ": " + str(current_cost)
+
+		v = -(gradient)
+		w = w + my * v
+
+		# interactive plotting as we progress
+		plt.plot(iters, costs, 'r-')
+		plt.draw()
+		t += 1
+	return w
+
+
+# someX = np.concatenate([singleX, singleX, singleX]).reshape(3,9)
+# someY = np.array([0,1,0,1,1,0]).reshape(3,2)
+# someTheta = np.array([1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]).reshape(9,2)
+
+# print "X: " + str(someX.shape)
+# print "Y: " + str(someY.shape)
+# print "Theta: " + str(someTheta.shape)
+
+# print np.dot(someY[3], np.log(softmax(np.dot(someTheta.T, someX[3]))))
+# print np.dot(-someX.T, someY - matrix_softmax(np.dot(someX, someTheta)))
+
+# myXs = append_ones_column_first(autrainimages)
+# myYs = convert_labels(autrainlabels)
+# myTheta = np.zeros(myXs.shape[1]*myYs.shape[1]).reshape(myXs.shape[1], myYs.shape[1])
+# soft_run(myXs, myYs, myTheta)
+
+
+
+
+
+
+
+def classifyDigits(X, Y, theta):
+	# initX = append_ones_column_first(images)
+	# initY = convert_labels(labels)	
+	# initTheta = np.zeros(785*10).reshape(785,10)
+	# initTheta[:,0] = 1
 
 	print "running soft_run"
 	start = time.clock()
-	learnedThetas = soft_run(initX, initY, initTheta)
+	learnedThetas = soft_run(X, Y, theta)
 	end = time.clock()
 	print "finished in " + str(end-start) + " seconds"
 	np.savez("softmax_matrixOps_learnedThetas_st1_cl01.npz", theta=learnedThetas)
 
+def training_validation_split(aSetImgs, aSetLabels, ratio):
+	comb = np.c_[aSetImgs, aSetLabels]
+	np.random.shuffle(comb)
+	validation_size = aSetImgs.shape[0]/ratio
+	training_size = aSetImgs.shape[0] - validation_size
+	training_set = comb[0:training_size,:]
+	validation_set = comb[training_size:aSetImgs.shape[0],:]
 
+	training_imgs = training_set[:,0:training_set.shape[1]-1]
+	validation_imgs = validation_set[:,0:validation_set.shape[1]-1]
 
-# initY = convert_labels(traininglabels)
-# initX = append_ones_column_first(trainingimgs)
-# initTheta = np.zeros(785*10).reshape(785,10)
-# initTheta[:,:] = 0.00000001
-# initTheta[:,0] = 1
+	training_labels = training_set[:,training_set.shape[1]-1]
+	validation_labels = validation_set[:,validation_set.shape[1]-1]
+	return training_imgs, validation_imgs, training_labels, validation_labels
 
-# classifyDigits()
+trainingimgs, validationimgs, traininglabels, validationlabels = training_validation_split(autrainimages, autrainlabels, 5)
 
-# someX = np.array([0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9]).reshape(10,3)
+initY = convert_labels(traininglabels)
+initX = append_ones_column_first(trainingimgs)
+initTheta = np.zeros(785*10).reshape(785,10)
+initTheta[:,0] = 1
 
-# print softmax(someX.T)[0]
-# print softmax(someX)[1]
-# print softmax(someX)[2]
-# print softmax(someX)[9]
+classifyDigits(initX, initY, initTheta)
+
 
 
 def recognizeNumber(image, thetas):
@@ -148,93 +168,8 @@ def compare(start_idx, nr_tests, thetas, images, labels):
 	return errors
 
 
-# myThetas = np.load("softmax_learnedThetas_st1_cl01.npz")['theta']
-# compare(0, 10000, myThetas, testimages, testlabels)
 
 
 
-
-
-
-
-
-
-
-
-datafile = np.load('mnistTrain.npz')
-
-labels = np.squeeze(datafile['labels'])
-images = datafile['images']
-
-
-def softmax(x):
-	# x is a K-dimensional vector, K = 10
-
-	# OPFOERER DEN SIG KORREKT??
-	# Tager vi amax og expsum for hele matricen x,
-	# og udregner derefter noget per indgang i for-loekken??
-	# burde den nogensinde give rent 0? (problem med ln senere, ln(0) = -Inf)
-	max_x = np.amax(x)
-	expsum = np.sum(np.exp(x - max_x))
-	return np.array([np.exp(xi - (max_x + np.log(expsum))) for xi in x])
-
-def wtf(X, Y, theta):
-	print X.shape
-	print Y.shape
-	print theta.shape
-	tmp = np.dot(X, theta).T
-	tmp = softmax(tmp)
-	print tmp
-	tmp = np.log(tmp)
-	tmp = np.dot(Y, tmp)
-	tmp = -np.sum(tmp)
-	lol = (1.0 / X.shape[0]) * tmp
-	# lol = np.log(softmax(np.dot(X, theta).T)).T
-	# print np.dot(lol, Y.T)
-	# print softmax((np.dot(X, theta))).shape
-	# print softmax((np.dot(X, theta).T)).shape
-	# print Y.shape
-
-	costsum = 0.0
-	for i in range(0, X.shape[0]):
-		costsum += np.dot(Y[i], np.log(softmax(np.dot(theta.T, X[i]))))
-
-	costsum = (1.0 / X.shape[0]) * (-costsum)
-	print str(costsum)
-	print str(lol)
-
-	print "difference: " + str(lol-costsum)
-	# lol = np.log(softmax(np.dot(X, theta).T)).T
-	# print "will print"
-	# print np.dot(lol, Y.T)
-	# print "will not print"
-
-print "STARTING"
-# initX = append_ones_column_first(images)
-# initY = convert_labels(labels)	
-# initTheta = np.zeros(785*10).reshape(785,10)
-# initTheta[:,0] = 1
-
-wtf_param = 48
-initX = np.c_[np.ones(wtf_param), np.arange(wtf_param * 4).reshape(wtf_param,4)]
-# print initX.shape
-initY = np.arange(wtf_param * 2).reshape(wtf_param, 2)
-# print initY.shape
-initTheta = np.zeros(10).reshape(5,2)
-initTheta[:,0] = 1
-# print initTheta.shape
-
-wtf(initX, initY, initTheta)
-print "STOPPING"
-
-
-
-
-
-
-
-
-
-
-
-
+myThetas = np.load("softmax_matrixOps_learnedThetas_st1_cl01.npz")['theta']
+compare(0, validationimgs.shape[0], myThetas, validationimgs, validationlabels)
