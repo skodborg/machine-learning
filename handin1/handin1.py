@@ -61,54 +61,19 @@ def append_ones_column_first(X):
 	return np.c_[np.ones(X.shape[0]), X]
 
 def soft_cost(X, Y, theta, useRegularization=False, lambda_i=0):
-	fn_cost = -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta)))))
-	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta))))
+	if (useRegularization):
+		# regularization using weight decay as regularizer and a varying parameter, 
+		# given by 3 to the power of lambda_i   (3^i * wTw)
+		lmb = 3
+		regularization_param = (lmb**lambda_i) * np.sum(theta[1:,]**2)
+		regularization_param_derivative = (lmb**lambda_i) * np.sum(2 * theta[1:,])
+	else:
+		regularization_param = 0
+		regularization_param_derivative = 0
+
+	fn_cost = -(np.sum(Y * np.log(matrix_softmax(np.dot(X, theta))))) + regularization_param
+	gradient = np.dot(-X.T, (Y - matrix_softmax(np.dot(X, theta)))) + regularization_param_derivative
 	return fn_cost, gradient
-
-# def old_soft_run(X, Y, theta, useRegularization=False, lambda_i=0):
-# 	w = theta
-# 	my = 0.2
-# 	current_cost = 100000000.0
-# 	costImprovLimit = 0.001
-# 	costImprovement = 1.0
-# 	iters = []
-# 	costs = []
-# 	t = 0
-# 	# interactive plotting as we progress
-# 	plt.ion()
-# 	plt.show()
-# 	for t in range(0, 1000):
-# 	# while costImprovement > costImprovLimit:
-# 		costfn, gradient = soft_cost(X, Y, w)
-# 		gradient = (1.0 / X.shape[0]) * gradient
-# 		old_cost = current_cost
-# 		current_cost = (1.0 / X.shape[0]) * costfn
-# 		# plot cost per iteration
-# 		costs.append(current_cost)
-# 		iters.append(t)
-
-# 		if (old_cost < current_cost):
-# 			print "OUCH! increased cost, returning current weight. Latest cost impr. of " + str(costImprovement) + " using step size " + str(my)
-# 			print "cost at: " + str(current_cost)
-# 			# plot costs per iteration
-# 			# if (current_cost > 0.15):
-# 				# plt.plot(iters, costs, 'r-')
-# 				# plt.show()
-# 			return w
-# 		costImprovement = ((old_cost - current_cost) / old_cost) * 100.0
-		
-# 		print str(t) + ": " + str(current_cost) + " diff: " + str(costImprovement)
-
-# 		v = -(gradient)
-# 		w = w + my * v
-
-# 		# interactive plotting as we progress
-# 		plt.plot(iters, costs, 'r-')
-# 		plt.draw()
-# 		if (t % 100 == 0):
-# 			compare(0, validationimgs.shape[0], w, validationimgs, validationlabels)
-# 		t += 1
-# 	return w
 
 
 def logistic_func(z):
@@ -127,8 +92,6 @@ def recognizeNumber(image, thetas):
 	mostLikelyDigit = 0
 	for i in range(0,10):
 		currTheta = thetas[i]
-		print currTheta.shape
-		print image.shape
 		prob = h(currTheta, image)
 		if (prob > maxProb):
 			maxProb = prob
@@ -208,7 +171,7 @@ def gradient_descent(X, y, theta, fn_cost, lambda_i, useRegularization, plotWeig
 
 	# for t in range(0, 500):
 	while costImprovement > costImprovLimit:
-		costfn, gradient = fn_cost(X, y, w, lambda_i, useRegularization)
+		costfn, gradient = fn_cost(X, y, w, lambda_i=lambda_i, useRegularization=useRegularization)
 		gradient = (1.0 / X.shape[0]) * gradient
 		old_cost = current_cost
 		current_cost = (1.0 / X.shape[0]) * costfn
@@ -237,6 +200,7 @@ def gradient_descent(X, y, theta, fn_cost, lambda_i, useRegularization, plotWeig
 			iters.append(t)
 			plt.plot(iters, costs, 'r-')
 			plt.draw()
+			plt.show()
 		t += 1
 	# print "Finished, returning gradient at a cost improvement of " + format(costImprovement, '.17f')
 	return w	
@@ -288,9 +252,9 @@ def compare(start_idx, nr_tests, thetas, images, labels, only2vs7=False, softmax
 		label = labels[i]
 		if (guess != label):
 			errors += 1
-			# print "error! guessing: " + str(guess) + " actual: " + str(label) + "    " + str(prob) + "%"
-			# visualize_image(i, images)
-			# plt.show()
+			print "error! guessing: " + str(guess) + " actual: " + str(label) + "    " + str(prob) + "%"
+			visualize_image(i, images)
+			plt.show()
 	print "total errors: " + str(errors) + "/" + str(nr_tests)
 	pct_error = (float(errors)/nr_tests)*100
 	print "error pct: {0:.0f}%".format(pct_error)
@@ -319,6 +283,24 @@ def findBestRegularizedTheta(trainingimgs, validationimgs, traininglabels, valid
 	print "done with i = " + str(best_model)
 
 
+def findBestRegularizedSoftmaxTheta(trainingimgs, validationimgs, traininglabels, validationlabels):
+	best_model = 0
+	lowest_errors = 10000000
+	# for i in [-100, 100]:
+	for i in range(0,1):
+		print "training with regularization param 3^"+str(i)
+		initTheta = np.zeros(trainingimgs.shape[1] * traininglabels.shape[1])
+		initTheta = initTheta.reshape(trainingimgs.shape[1], traininglabels.shape[1])
+		currTheta = soft_run(trainingimgs, traininglabels, initTheta, lambda_i=i, useRegularization=False)
+		curr_error = compare(0, validationimgs.shape[0], 
+							 currTheta, validationimgs, 
+							 validationlabels, softmax=True)
+		if (curr_error < lowest_errors):
+			best_model = i
+			lowest_errors = curr_error
+			print "new best: " + str(i) + " with " + str(curr_error) + " errors"
+	print "done with i = " + str(best_model)
+
 def learnTwosVsSevens():
 	# loading relevant data
 	autraindatafile = np.load('auTrainMerged.npz')
@@ -341,9 +323,15 @@ def learnTwosVsSevens():
 
 def plotAlVsOnesWeights():
 	thetas = np.load('all_vs_ones_weights.npz')['thetas']
+	# thetas = np.load('error_10p_st_2_softmax_learnedThetas.npz')['theta']
+	# for logistic regression weights
 	for theta in thetas:
 		plt.imshow(np.rot90(theta[1:,].reshape(28,28)))
 		plt.show()
+	# for softmax regression weights
+	# for i in range(0,thetas.shape[0]-1):
+	# 	plt.imshow(thetas[1:,i].reshape(28,28))
+	# 	plt.show()
 
 
 def classifyDigits(images, labels):
@@ -362,9 +350,10 @@ def classifyDigits_softmax(images, labels):
 	theta = np.zeros(images.shape[1]*labels.shape[1]).reshape(images.shape[1], labels.shape[1])
 	print "running soft_run"
 	start = time.clock()
-	learnedThetas = soft_run(images, labels, theta)
+	learnedThetas = soft_run(images, labels, theta, lambda_i=1, useRegularization=True, plotCosts=True)
 	end = time.clock()
 	print "finished in " + str(end-start) + " seconds"
+	# np.savez("reg_1_softmax_learnedTheta.npz", theta=learnedThetas)
 	return learnedThetas
 
 
@@ -383,21 +372,41 @@ def load_and_estimate_errors():
 	aulbls = autraindatafile['labels']
 
 	unreg_thetas = np.load('unreg_all_vs_ones_weights.npz')['thetas']
-	# print "MNIST in-sample error:"
-	# compare(0, images.shape[0], unreg_thetas, images, labels)
-	# print "MNIST out-of-sample error (using test set):"
-	# compare(0, testimages.shape[0], unreg_thetas, testimages, testlabels)
+	print "MNIST in-sample error:"
+	compare(0, images.shape[0], unreg_thetas, images, labels)
+	print "MNIST out-of-sample error (using test set):"
+	compare(0, testimages.shape[0], unreg_thetas, testimages, testlabels)
 	
-	# print "\nauDigits 2 vs 7 in-sample and out-of-sample"
-	# learnTwosVsSevens()
+	print "\nauDigits 2 vs 7 in-sample and out-of-sample"
+	learnTwosVsSevens()
 
 	# someDigit = 3
 	# print "\nPlot of weight on auDigits for digit " + str(someDigit) + " after 5 iterations"
 	# findThetaForClassifier(someDigit, 0, auimgs, aulbls, plotWeights=True)
 	
-	print "Running softmax on auDigits"
-	myThetas = classifyDigits_softmax(append_ones_column_first(auimgs), convert_labels(aulbls))
-	compare(0, auimgs.shape[0], myThetas, auimgs, aulbls, softmax=True)
+	# print "Running softmax on auDigits"
+	# myThetas = classifyDigits_softmax(append_ones_column_first(auimgs), convert_labels(aulbls))
+	# compare(0, auimgs.shape[0], myThetas, auimgs, aulbls, softmax=True)
+
+	# print "Regularization on auDigits using softmax"
+	# trainimg, validimg, trainlbl, validlbl = training_validation_split(auimgs, aulbls, 5)
+	# trainimg = append_ones_column_first(trainimg)
+	# trainlbl = convert_labels(trainlbl)
+	# findBestRegularizedSoftmaxTheta(trainimg, validimg, trainlbl, validlbl)
+
+	# plotAlVsOnesWeights()
+
+	# print "Comparing regularized and unregularized"
+	# unregThetas = np.load('error_10p_st_2_softmax_learnedThetas.npz')['theta']
+	# regThetas = np.load('reg_1_softmax_learnedTheta.npz')['theta']
+	# compare(0, auimgs.shape[0], unregThetas, auimgs, aulbls, softmax=True)
+	# compare(0, auimgs.shape[0], regThetas, auimgs, aulbls, softmax=True)
+
+	# best_theta = np.load("params.npz")['theta']
+	# unregThetas = np.load('error_10p_st_2_softmax_learnedThetas.npz')['theta']
+	# np.savez("params.npz", theta=best_theta, softmaxTheta=unregThetas)
+
+
 
 
 if __name__ == "__main__":
