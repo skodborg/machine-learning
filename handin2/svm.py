@@ -33,7 +33,7 @@ def test():
 		print("TRYING WITH C = " + str(3) + "**" + str(i))
 		run(SVC(kernel='linear', C=c))
 
-	degrees = [2, 3, 4, 5]
+	degrees = [2, 3, 4]
 	# Polynomial Kernel
 	print("Polynomial Kernel")
 	for i in C:
@@ -43,7 +43,7 @@ def test():
 			print("TRYING WITH C = " + str(3) + "**" + str(i) + " AND d = " + str(d))
 			run(SVC(kernel='poly', C=c, degree=d))
 
-	gammas = [-10.0, -5.0, -3.0, -1.0, 0.0, 1.0, 3.0]
+	gammas = [-10.0, -5.0, -1.0, 0.0, 1.0, 3.0, 4.0, 5.0, 6.0, 7.0]
 	# RBF Kernel
 	print("RBF Kernel")
 	for i in C:

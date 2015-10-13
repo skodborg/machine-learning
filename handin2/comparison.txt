@@ -1,0 +1,583 @@
+200 iterations on auTrainMerged.npz
+
+--------------------------------------------
+Linear Kernel
+--------------------------------------------
+
+C = 3**-10.0
+in-sample correct classifications: 1044/6000, 17.4%
+out-of-sample correct classifications: 229/1500, 15.266666666666667%
+
+C = 3**-7.0
+in-sample correct classifications: 5306/6000, 88.43333333333334%
+out-of-sample correct classifications: 1316/1500, 87.73333333333333%
+
+C = 3**-5.0
+in-sample correct classifications: 5538/6000, 92.30000000000001%
+out-of-sample correct classifications: 1380/1500, 92.0%
+
+C = 3**-3.0
+in-sample correct classifications: 5762/6000, 96.03333333333333%
+out-of-sample correct classifications: 1386/1500, 92.4%
+
+C = 3**-1.0
+in-sample correct classifications: 5962/6000, 99.36666666666667%
+out-of-sample correct classifications: 1371/1500, 91.4%
+
+C = 3**0.0
+in-sample correct classifications: 5997/6000, 99.95%
+out-of-sample correct classifications: 1365/1500, 91.0%
+
+C = 3**1.0
+in-sample correct classifications: 5999/6000, 99.98333333333333%
+out-of-sample correct classifications: 1346/1500, 89.73333333333333%
+
+C = 3**2.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1367/1500, 91.13333333333333%
+
+C = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1343/1500, 89.53333333333333%
+
+C = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1385/1500, 92.33333333333333%
+
+C = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1378/1500, 91.86666666666666%
+
+C = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1354/1500, 90.26666666666667%
+
+C = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1366/1500, 91.06666666666666%
+
+
+
+--------------------------------------------
+RBF Kernel
+--------------------------------------------
+
+C = 3**-10.0 AND g = 3**-10.0
+in-sample correct classifications: 620/6000, 10.333333333333334%
+out-of-sample correct classifications: 130/1500, 8.666666666666668%
+
+C = 3**-10.0 AND g = 3**-5.0
+in-sample correct classifications: 619/6000, 10.316666666666666%
+out-of-sample correct classifications: 131/1500, 8.733333333333333%
+
+C = 3**-10.0 AND g = 3**-1.0
+in-sample correct classifications: 1224/6000, 20.4%
+out-of-sample correct classifications: 139/1500, 9.266666666666666%
+
+C = 3**-10.0 AND g = 3**0.0
+in-sample correct classifications: 617/6000, 10.283333333333333%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**-10.0 AND g = 3**1.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-10.0 AND g = 3**3.0
+in-sample correct classifications: 617/6000, 10.283333333333333%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**-10.0 AND g = 3**4.0
+in-sample correct classifications: 622/6000, 10.366666666666667%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**-10.0 AND g = 3**5.0
+in-sample correct classifications: 620/6000, 10.333333333333334%
+out-of-sample correct classifications: 130/1500, 8.666666666666668%
+
+C = 3**-10.0 AND g = 3**6.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-10.0 AND g = 3**7.0
+in-sample correct classifications: 612/6000, 10.2%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**-7.0 AND g = 3**-10.0
+in-sample correct classifications: 616/6000, 10.266666666666667%
+out-of-sample correct classifications: 134/1500, 8.933333333333334%
+
+C = 3**-7.0 AND g = 3**-5.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-7.0 AND g = 3**-1.0
+in-sample correct classifications: 615/6000, 10.25%
+out-of-sample correct classifications: 135/1500, 9.0%
+
+C = 3**-7.0 AND g = 3**0.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-7.0 AND g = 3**1.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-7.0 AND g = 3**3.0
+in-sample correct classifications: 626/6000, 10.433333333333334%
+out-of-sample correct classifications: 124/1500, 8.266666666666666%
+
+C = 3**-7.0 AND g = 3**4.0
+in-sample correct classifications: 1830/6000, 30.5%
+out-of-sample correct classifications: 141/1500, 9.4%
+
+C = 3**-7.0 AND g = 3**5.0
+in-sample correct classifications: 612/6000, 10.2%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**-7.0 AND g = 3**6.0
+in-sample correct classifications: 614/6000, 10.233333333333333%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**-7.0 AND g = 3**7.0
+in-sample correct classifications: 1230/6000, 20.5%
+out-of-sample correct classifications: 135/1500, 9.0%
+
+C = 3**-5.0 AND g = 3**-10.0
+in-sample correct classifications: 624/6000, 10.4%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**-5.0 AND g = 3**-5.0
+in-sample correct classifications: 1124/6000, 18.73333333333333%
+out-of-sample correct classifications: 251/1500, 16.733333333333334%
+
+C = 3**-5.0 AND g = 3**-1.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-5.0 AND g = 3**0.0
+in-sample correct classifications: 614/6000, 10.233333333333333%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**-5.0 AND g = 3**1.0
+in-sample correct classifications: 619/6000, 10.316666666666666%
+out-of-sample correct classifications: 131/1500, 8.733333333333333%
+
+C = 3**-5.0 AND g = 3**3.0
+in-sample correct classifications: 613/6000, 10.216666666666667%
+out-of-sample correct classifications: 137/1500, 9.133333333333333%
+
+C = 3**-5.0 AND g = 3**4.0
+in-sample correct classifications: 624/6000, 10.4%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**-5.0 AND g = 3**5.0
+in-sample correct classifications: 629/6000, 10.483333333333334%
+out-of-sample correct classifications: 121/1500, 8.066666666666666%
+
+C = 3**-5.0 AND g = 3**6.0
+in-sample correct classifications: 619/6000, 10.316666666666666%
+out-of-sample correct classifications: 131/1500, 8.733333333333333%
+
+C = 3**-5.0 AND g = 3**7.0
+in-sample correct classifications: 619/6000, 10.316666666666666%
+out-of-sample correct classifications: 131/1500, 8.733333333333333%
+
+C = 3**-3.0 AND g = 3**-10.0
+in-sample correct classifications: 614/6000, 10.233333333333333%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**-3.0 AND g = 3**-5.0
+in-sample correct classifications: 5202/6000, 86.7%
+out-of-sample correct classifications: 1281/1500, 85.39999999999999%
+
+C = 3**-3.0 AND g = 3**-1.0
+in-sample correct classifications: 612/6000, 10.2%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**-3.0 AND g = 3**0.0
+in-sample correct classifications: 617/6000, 10.283333333333333%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**-3.0 AND g = 3**1.0
+in-sample correct classifications: 621/6000, 10.35%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**-3.0 AND g = 3**3.0
+in-sample correct classifications: 624/6000, 10.4%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**-3.0 AND g = 3**4.0
+in-sample correct classifications: 622/6000, 10.366666666666667%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**-3.0 AND g = 3**5.0
+in-sample correct classifications: 622/6000, 10.366666666666667%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**-3.0 AND g = 3**6.0
+in-sample correct classifications: 611/6000, 10.183333333333334%
+out-of-sample correct classifications: 139/1500, 9.266666666666666%
+
+C = 3**-3.0 AND g = 3**7.0
+in-sample correct classifications: 612/6000, 10.2%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**-1.0 AND g = 3**-10.0
+in-sample correct classifications: 1369/6000, 22.816666666666666%
+out-of-sample correct classifications: 306/1500, 20.4%
+
+C = 3**-1.0 AND g = 3**-5.0
+in-sample correct classifications: 5570/6000, 92.83333333333333%
+out-of-sample correct classifications: 1385/1500, 92.33333333333333%
+
+C = 3**-1.0 AND g = 3**-1.0
+in-sample correct classifications: 819/6000, 13.65%
+out-of-sample correct classifications: 170/1500, 11.333333333333332%
+
+C = 3**-1.0 AND g = 3**0.0
+in-sample correct classifications: 613/6000, 10.216666666666667%
+out-of-sample correct classifications: 139/1500, 9.266666666666666%
+
+C = 3**-1.0 AND g = 3**1.0
+in-sample correct classifications: 611/6000, 10.183333333333334%
+out-of-sample correct classifications: 139/1500, 9.266666666666666%
+
+C = 3**-1.0 AND g = 3**3.0
+in-sample correct classifications: 621/6000, 10.35%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**-1.0 AND g = 3**4.0
+in-sample correct classifications: 628/6000, 10.466666666666667%
+out-of-sample correct classifications: 122/1500, 8.133333333333333%
+
+C = 3**-1.0 AND g = 3**5.0
+in-sample correct classifications: 612/6000, 10.2%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**-1.0 AND g = 3**6.0
+in-sample correct classifications: 618/6000, 10.299999999999999%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**-1.0 AND g = 3**7.0
+in-sample correct classifications: 614/6000, 10.233333333333333%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**0.0 AND g = 3**-10.0
+in-sample correct classifications: 2946/6000, 49.1%
+out-of-sample correct classifications: 698/1500, 46.53333333333333%
+
+C = 3**0.0 AND g = 3**-5.0
+in-sample correct classifications: 5730/6000, 95.5%
+out-of-sample correct classifications: 1420/1500, 94.66666666666667%
+
+C = 3**0.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 290/1500, 19.333333333333332%
+
+C = 3**0.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 181/1500, 12.066666666666666%
+
+C = 3**0.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**0.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**0.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**0.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 131/1500, 8.733333333333333%
+
+C = 3**0.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 134/1500, 8.933333333333334%
+
+C = 3**0.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 135/1500, 9.0%
+
+C = 3**1.0 AND g = 3**-10.0
+in-sample correct classifications: 4985/6000, 83.08333333333333%
+out-of-sample correct classifications: 1215/1500, 81.0%
+
+C = 3**1.0 AND g = 3**-5.0
+in-sample correct classifications: 5884/6000, 98.06666666666666%
+out-of-sample correct classifications: 1421/1500, 94.73333333333333%
+
+C = 3**1.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 325/1500, 21.666666666666668%
+
+C = 3**1.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 152/1500, 10.133333333333333%
+
+C = 3**1.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**1.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 130/1500, 8.666666666666668%
+
+C = 3**1.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 127/1500, 8.466666666666667%
+
+C = 3**1.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**1.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**1.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 137/1500, 9.133333333333333%
+
+C = 3**2.0 AND g = 3**-10.0
+in-sample correct classifications: 5232/6000, 87.2%
+out-of-sample correct classifications: 1299/1500, 86.6%
+
+C = 3**2.0 AND g = 3**-5.0
+in-sample correct classifications: 5979/6000, 99.65%
+out-of-sample correct classifications: 1423/1500, 94.86666666666666%
+
+C = 3**2.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 318/1500, 21.2%
+
+C = 3**2.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 173/1500, 11.533333333333333%
+
+C = 3**2.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 148/1500, 9.866666666666667%
+
+C = 3**2.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 121/1500, 8.066666666666666%
+
+C = 3**2.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**2.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 135/1500, 9.0%
+
+C = 3**2.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**2.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 134/1500, 8.933333333333334%
+
+C = 3**3.0 AND g = 3**-10.0
+in-sample correct classifications: 5404/6000, 90.06666666666666%
+out-of-sample correct classifications: 1313/1500, 87.53333333333333%
+
+C = 3**3.0 AND g = 3**-5.0
+in-sample correct classifications: 5998/6000, 99.96666666666667%
+out-of-sample correct classifications: 1443/1500, 96.2%
+
+C = 3**3.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 340/1500, 22.666666666666664%
+
+C = 3**3.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 149/1500, 9.933333333333334%
+
+C = 3**3.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 140/1500, 9.333333333333334%
+
+C = 3**3.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**3.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 136/1500, 9.066666666666666%
+
+C = 3**3.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 138/1500, 9.2%
+
+C = 3**3.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**3.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**4.0 AND g = 3**-10.0
+in-sample correct classifications: 5529/6000, 92.15%
+out-of-sample correct classifications: 1352/1500, 90.13333333333333%
+
+C = 3**4.0 AND g = 3**-5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1427/1500, 95.13333333333334%
+
+C = 3**4.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 355/1500, 23.666666666666668%
+
+C = 3**4.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 172/1500, 11.466666666666667%
+
+C = 3**4.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**4.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 134/1500, 8.933333333333334%
+
+C = 3**4.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 130/1500, 8.666666666666668%
+
+C = 3**4.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 157/1500, 10.466666666666667%
+
+C = 3**4.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 134/1500, 8.933333333333334%
+
+C = 3**4.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 139/1500, 9.266666666666666%
+
+C = 3**5.0 AND g = 3**-10.0
+in-sample correct classifications: 5626/6000, 93.76666666666667%
+out-of-sample correct classifications: 1369/1500, 91.26666666666667%
+
+C = 3**5.0 AND g = 3**-5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1412/1500, 94.13333333333334%
+
+C = 3**5.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 261/1500, 17.4%
+
+C = 3**5.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 155/1500, 10.333333333333334%
+
+C = 3**5.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**5.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 137/1500, 9.133333333333333%
+
+C = 3**5.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 141/1500, 9.4%
+
+C = 3**5.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 130/1500, 8.666666666666668%
+
+C = 3**5.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**5.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**6.0 AND g = 3**-10.0
+in-sample correct classifications: 5727/6000, 95.45%
+out-of-sample correct classifications: 1393/1500, 92.86666666666666%
+
+C = 3**6.0 AND g = 3**-5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1443/1500, 96.2%
+
+C = 3**6.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 327/1500, 21.8%
+
+C = 3**6.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 183/1500, 12.2%
+
+C = 3**6.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**6.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 126/1500, 8.4%
+
+C = 3**6.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 128/1500, 8.533333333333333%
+
+C = 3**6.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 129/1500, 8.6%
+
+C = 3**6.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**6.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 140/1500, 9.333333333333334%
+
+C = 3**7.0 AND g = 3**-10.0
+in-sample correct classifications: 5859/6000, 97.65%
+out-of-sample correct classifications: 1386/1500, 92.4%
+
+C = 3**7.0 AND g = 3**-5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 1428/1500, 95.19999999999999%
+
+C = 3**7.0 AND g = 3**-1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 281/1500, 18.73333333333333%
+
+C = 3**7.0 AND g = 3**0.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 174/1500, 11.600000000000001%
+
+C = 3**7.0 AND g = 3**1.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 137/1500, 9.133333333333333%
+
+C = 3**7.0 AND g = 3**3.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 216/1500, 14.399999999999999%
+
+C = 3**7.0 AND g = 3**4.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 133/1500, 8.866666666666667%
+
+C = 3**7.0 AND g = 3**5.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 123/1500, 8.200000000000001%
+
+C = 3**7.0 AND g = 3**6.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 132/1500, 8.799999999999999%
+
+C = 3**7.0 AND g = 3**7.0
+in-sample correct classifications: 6000/6000, 100.0%
+out-of-sample correct classifications: 129/1500, 8.6%
