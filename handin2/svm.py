@@ -48,10 +48,11 @@ def test():
 	print("RBF Kernel")
 	for i in C:
 		for g in gammas:
+			gamma = 3**g
 			c = 3**i
 			print()
-			print("TRYING WITH C = " + str(3) + "**" + str(i) + " AND g = " + str(g))
-			run(SVC(kernel='rbf', C=c, gamma=g))
+			print("TRYING WITH C = " + str(3) + "**" + str(i) + " AND g = " + str(3) + "**" + str(g))
+			run(SVC(kernel='rbf', C=c, gamma=gamma))
 
 if __name__ == '__main__':
 	test()
