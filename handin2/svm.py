@@ -24,13 +24,34 @@ def run(svc):
 	# print(test_images.shape[0])
 
 def test():
-	C = [-10, -7, -5, -4, -3, -2, -1, 0, 1, 2, 3]
+	C = [-10.0, -7.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]
 	# Linear Kernel
+	print("Linear Kernel")
 	for i in C:
 		c = 3**i
 		print()
 		print("TRYING WITH C = " + str(3) + "**" + str(i))
 		run(SVC(kernel='linear', C=c))
+
+	degrees = [2, 3, 4, 5]
+	# Polynomial Kernel
+	print("Polynomial Kernel")
+	for i in C:
+		for d in degrees:
+			c = 3**i
+			print()
+			print("TRYING WITH C = " + str(3) + "**" + str(i) + " AND d = " + str(d))
+			run(SVC(kernel='poly', C=c, degree=d))
+
+	gammas = [-10.0, -5.0, -3.0, -1.0, 0.0, 1.0, 3.0]
+	# RBF Kernel
+	print("RBF Kernel")
+	for i in C:
+		for g in gammas:
+			c = 3**i
+			print()
+			print("TRYING WITH C = " + str(3) + "**" + str(i) + " AND g = " + str(g))
+			run(SVC(kernel='rbf', C=c, gamma=g))
 
 if __name__ == '__main__':
 	test()
