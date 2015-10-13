@@ -24,7 +24,7 @@ def run(svc):
 	# print(test_images.shape[0])
 
 def test():
-	C = [-10.0, -7.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]
+	C = [-10.0, -7.0, -5.0, -3.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
 	# Linear Kernel
 	print("Linear Kernel")
 	for i in C:
