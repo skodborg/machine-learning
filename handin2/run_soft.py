@@ -3,12 +3,20 @@ import matplotlib.pyplot as plt
 import load_data
 import softreg as sm
 
-def run():
+def run(reg):
     # load data and set parameters
-    images,labels =load_data.mnist_train()
-    test_images,test_labels = load_data.mnist_test()
-    reg = 0.0
-    rounds = 10
+    # images,labels =load_data.mnist_train()
+    # test_images,test_labels = load_data.mnist_test()
+
+    images, labels, test_images, test_labels = load_data.auDigit_data()
+    labels = labels.astype(int)
+    test_labels = test_labels.astype(int)
+
+    images = np.c_[np.ones(images.shape[0]), images]
+    test_images = np.c_[np.ones(test_images.shape[0]), test_images]
+
+    # reg = 0.0
+    rounds = 200
     # shape labels into matrix
     lab_matrix = np.zeros((labels.size,10))
     lab_matrix[np.arange(labels.shape[0]),labels]=1
@@ -35,11 +43,15 @@ def run():
     # print learned weights
     tr = opt_theta.reshape(785,10)
     tr = tr[1:,:]
-    plt.imshow(tr.reshape(28,-1,order='F'),cmap='bone')
-    plt.show()
+    # plt.imshow(tr.reshape(28,-1,order='F'),cmap='bone')
+    # plt.show()
     ## Should Print something like
     ## Softmax in sample classification rate 88.82
     ## Softmax test sample classification rate 89.58
 
 if __name__=="__main__":
-    run()
+    for i in [-10.0, -5.0, -3.0, -1.0, 0.0, 1.0, 3.0]:
+        print("REGULARIZATION: " + str(3) + "**" + str(i))
+        run(3**i)
+    print("REGULARIZATION: " + str(0))
+    run(0)
