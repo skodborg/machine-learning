@@ -27,6 +27,8 @@ import contextlib
 import numpy as np
 import scipy.optimize
 
+import load_data
+
 
 class Timer(object):
     def __init__(self):
@@ -266,9 +268,9 @@ def nn_descent_2(w, x, labels):
         regularization = l/2 * w_norm_sq(w)
 
         i[0] += 1
-        print("[%3d] e=%4.1f%% cost=%13.7e ½λ|w|²=%13.7e |g|²=%13.7e" %
-              (i[0], 100 * e, cost - regularization, regularization,
-               w_norm_sq(grad)))
+        # print("[%3d] e=%4.1f%% cost=%13.7e ½λ|w|²=%13.7e |g|²=%13.7e" %
+        #       (i[0], 100 * e, cost - regularization, regularization,
+        #        w_norm_sq(grad)))
         # print(timer)
 
         grad_flat = flat(grad)
@@ -407,6 +409,41 @@ def test(digits, labels):
     w = nn_descent_2(w, x, y)
     return w
 
+def run_learning():
+    t_imgs, t_lbls, v_imgs, v_lbls = load_data.auDigit_data()
+
+    # reshape labels to dimension N x k with k = 10 
+    #   (k = 10 because digits 0-9 should each be represented by 
+    #    an entry with a value between 0-1, like softmax)
+    old_t_lbls = t_lbls   # keep original t_lbls to compare with predictions
+    t_lbls = t_lbls.reshape((-1, 1))
+    t_lbls = (t_lbls == np.arange(10).reshape((1, 10))).astype(np.float64)
+
+    for h in [25, 40, 50, 75, 100, 150, 200, 500]:
+        for i in [-7, -5, -3, -1, 0, 1, 3, 5, 7]:
+            print("\nTrying hidden = " + str(h) + " and reg = 3**" + str(i))
+
+            # train neural net
+            nhidden = h
+            reg = 3**i
+            w = nn_train(t_imgs, t_lbls, nhidden, regularization=reg)
+
+            # estimate in-sample performance
+            predictions = nn_predict(w, t_imgs)
+            predictions = np.argmax(predictions,axis=1).astype(np.float64)    
+            tests = old_t_lbls.shape[0]
+            hits = np.sum(predictions == old_t_lbls)
+            pct = hits / tests * 100
+            print('in-sample:\n' + str(hits) + '/' + str(tests) + ', ' + str(pct) + ' %')
+
+            # estimate out-of-sample performance by validation of prediction
+            predictions = nn_predict(w, v_imgs)
+            predictions = np.argmax(predictions,axis=1).astype(np.float64)    
+            tests = v_lbls.shape[0]
+            hits = np.sum(predictions == v_lbls)
+            pct = hits / tests * 100
+            print('out-of-sample:\n' + str(hits) + '/' + str(tests) + ', ' + str(pct) + ' %')
+    
 
 def main():
     MODES = {'2vs7': simple_2_vs_7, 'all': classify_all,
@@ -433,4 +470,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    run_learning()
