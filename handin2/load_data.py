@@ -16,10 +16,13 @@ def mnist_test(addBias=True):
     lbls = np.squeeze(data['labels'])
     return imgs, lbls
 
-def auDigit_data(ratio=5):
-    data = np.load('auTrainMerged.npz')
+def auDigit_data(ratio=5, filearg='auTrainMerged.npz'):
+    data = np.load(filearg)
     imgs = data['digits']
     lbls = data['labels']
+
+    if ratio == 0:
+        return imgs, lbls
 
     # combine data and shuffle to keep img-lbl pairing
     comb = np.c_[imgs, lbls]

@@ -2,31 +2,25 @@ import os
 
 import numpy as np
 
-import nn
+from sklearn.svm import SVC
+from sklearn.decomposition import PCA
+from sklearn.externals import joblib
 
 
 def predict(digits):
     # digits is guaranteed to be an (n x 784) array
-    n, nin = digits.shape
 
-    if os.path.exists('weights.npz'):
-        # The key 'models' contains ten one-vs-all models
-        models = np.load('weights.npz')['models']
-    else:
-        # Hmm, we have no model. Pick 10 random models
-        models = [
-            nn.random_neural_net(nin, 40, 1)
-            for _ in range(10)
-        ]
+    # load our model
+    clf = joblib.load('au_trained_svm.pkl')
+    pca = joblib.load('au_trained_pca.pkl')
 
-    probs = []
-    for w in models:
-        p = nn.nn_predict(w, digits)
-        probs.append(p)
-    # probs is 10 x n. Pick the largest probability in each
-    labels = np.argmax(probs, axis=0)
-    return labels
+    # reduce dimensionality of images to 200 features
+    digits = pca.transform(digits)
 
+    # predict digits
+    predictions = clf.predict(digits)
+
+    return predictions
 
 def main():
     pass
