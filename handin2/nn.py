@@ -420,7 +420,7 @@ def run_learning():
     t_lbls = (t_lbls == np.arange(10).reshape((1, 10))).astype(np.float64)
 
     for h in [25, 40, 50, 75, 100, 150, 200, 500]:
-        for i in [-7, -5, -3, -1, 0, 1, 3, 5, 7]:
+        for i in [-15, -14, -13, -12, -11, -10, -9, -8]:
             print("\nTrying hidden = " + str(h) + " and reg = 3**" + str(i))
 
             # train neural net
