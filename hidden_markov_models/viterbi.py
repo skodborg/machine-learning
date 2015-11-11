@@ -23,8 +23,7 @@ emit_probs = np.array([[0.30, 0.25, 0.25, 0.20],
                        [0.30, 0.20, 0.30, 0.20], 
                        [0.15, 0.30, 0.20, 0.35]])
 
-def viterbi():
-  
+def viterbi_backtrack():  
   # BASIS
   idx_first_obs = observables.get(test_observations[0])
   omega = [init_probs] * emit_probs[:,idx_first_obs]
@@ -102,7 +101,7 @@ def viterbi():
 
 
 def main():
-  viterbi()
+  viterbi_backtrack()
 
 if __name__ == "__main__":
   main()
