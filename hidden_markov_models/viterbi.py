@@ -38,13 +38,13 @@ def viterbi():
     for i, _ in enumerate(states):
 
       # find transition probabilities from every state to this current state
-      prev_col_trans_to_curr_state = trans_probs[:,i]
+      trans_to_state_i = trans_probs[:,i]
       
       # fetch previous col in omega
       prev_omega_col = omega[-1]
 
       # find the max probability that this state will follow from the prev col
-      state_i_max_prob = np.max(prev_omega_col * prev_col_trans_to_curr_state)
+      state_i_max_prob = np.max(prev_omega_col * trans_to_state_i)
 
       # save for multiplying with emission probabilities to determine omega col
       max_vector.append(state_i_max_prob)
