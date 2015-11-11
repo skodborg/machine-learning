@@ -63,6 +63,44 @@ def viterbi():
   print(np.log(np.max(omega[-1])))
 
 
+  # BACKTRACKING
+
+  N = len(test_observations)-1  # off-by-one correction for indexing into lists
+  K = len(states)
+  z = np.zeros(len(test_observations))
+  z[N] = np.argmax(omega[len(omega)-1], axis=0)
+  
+  # n descending from N-1 to 0 inclusive
+  for n in range(N-1, -1, -1):
+  
+    max_vector = []
+    for k in range(0, K):
+      # only for matching pseudocode easily
+      x = test_observations
+
+      # matrix data structure index of observation
+      idx_obs = observables.get(x[n+1])
+
+      # probability of observing x[n+1] in state z[n+1]
+      p_xn1_zn1 = emit_probs[z[n+1]][idx_obs]
+
+      # our omega table indexing is flipped compared to the pseudocode alg.
+      omega_kn = omega[n][k]
+
+      # get transitions from state k to state z[n+1]
+      p_zn1_k = trans_probs[k,z[n+1]]
+
+      # add product to max_vector
+      max_vector.append(p_xn1_zn1 * omega_kn * p_zn1_k)
+    
+    # set z[n] to arg max of max_vector
+    z[n] = np.argmax(max_vector)
+
+  # add one to correspond to actual states rather than indexes into 'states'
+  z = z + 1
+  print(z)
+
+
 def main():
   viterbi()
 
