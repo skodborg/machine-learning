@@ -1,6 +1,23 @@
 import numpy as np
 
-test_observations = "GTTTCCCAGTGTATATCGAGGGATACTACGTGCATAGTAACATCGGCCAA"
+np.seterr(divide='ignore')
+
+# test_observations = "GTTTCCCAGTGTATATCGAGGGATACTACGTGCATAGTAACATCGGCCAA"
+test_observations = "\
+TGAGTATCACTTAGGTCTATGTCTAGTCGTCTTTCGTAATGTTTGGTCTTGTCACCAGTTATCCTATGGCGCTCC\
+GAGTCTGGTTCTCGAAATAAGCATCCCCGCCCAAGTCATGCACCCGTTTGTGTTCTTCGCCGACTTGAGCGACTT\
+AATGAGGATGCCACTCGTCACCATCTTGAACATGCCACCAACGAGGTTGCCGCCGTCCATTATAACTACAACCTA\
+GACAATTTTCGCTTTAGGTCCATTCACTAGGCCGAAATCCGCTGGAGTAAGCACAAAGCTCGTATAGGCAAAACC\
+GACTCCATGAGTCTGCCTCCCGACCATTCCCATCAAAATACGCTATCAATACTAAAAAAATGACGGTTCAGCCTC\
+ACCCGGATGCTCGAGACAGCACACGGACATGATAGCGAACGTGACCAGTGTAGTGGCCCAGGGGAACCGCCGCGC\
+CATTTTGTTCATGGCCCCGCTGCCGAATATTTCGATCCCAGCTAGAGTAATGACCTGTAGCTTAAACCCACTTTT\
+GGCCCAAACTAGAGCAACAATCGGAATGGCTGAAGTGAATGCCGGCATGCCCTCAGCTCTAAGCGCCTCGATCGC\
+AGTAATGACCGTCTTAACATTAGCTCTCAACGCTATGCAGTGGCTTTGGTGTCGCTTACTACCAGTTCCGAACGT\
+CTCGGGGGTCTTGATGCAGCGCACCACGATGCCAAGCCACGCTGAATCGGGCAGCCAGCAGGATCGTTACAGTCG\
+AGCCCACGGCAATGCGAGCCGTCACGTTGCCGAATATGCACTGCGGGACTACGGACGCAGGGCCGCCAACCATCT\
+GGTTGACGATAGCCAAACACGGTCCAGAGGTGCCCCATCTCGGTTATTTGGATCGTAATTTTTGTGAAGAACACT\
+GCAAACGCAAGTGGCTTTCCAGACTTTACGACTATGTGCCATCATTTAAGGCTACGACCCGGCTTTTAAGACCCC\
+CACCACTAAATAGAGGTACATCTGA"
 
 observables = {'A':0, 'C':1, 'G':2, 'T':3}
 states = {'1':0, '2': 1, '3':2, '4':3, '5':4, '6':5, '7':6}
@@ -23,11 +40,13 @@ emit_probs = np.array([[0.30, 0.25, 0.25, 0.20],
                        [0.30, 0.20, 0.30, 0.20], 
                        [0.15, 0.30, 0.20, 0.35]])
 
-def viterbi_backtrack():  
+def viterbi_backtrack(logSpace=False):
   # BASIS
   idx_first_obs = observables.get(test_observations[0])
-  omega = [init_probs] * emit_probs[:,idx_first_obs]
-
+  if logSpace:
+    omega = np.log([init_probs]) + np.log(emit_probs[:,idx_first_obs])
+  else:
+    omega = [init_probs] * emit_probs[:,idx_first_obs]
 
   # RECURSIVE
   for obs in range(1, len(test_observations)):
@@ -43,7 +62,10 @@ def viterbi_backtrack():
       prev_omega_col = omega[-1]
 
       # find the max probability that this state will follow from the prev col
-      state_i_max_prob = np.max(prev_omega_col * trans_to_state_i)
+      if logSpace:
+        state_i_max_prob = np.max(prev_omega_col + np.log(trans_to_state_i))
+      else:
+        state_i_max_prob = np.max(prev_omega_col * trans_to_state_i)
 
       # save for multiplying with emission probabilities to determine omega col
       max_vector.append(state_i_max_prob)
@@ -55,12 +77,17 @@ def viterbi_backtrack():
     emit_probs_curr_obs = emit_probs[:,idx_curr_obs]
     
     # create and add the new col to the omega table
-    new_omega_col = emit_probs_curr_obs * max_vector
+    if logSpace:
+      new_omega_col = np.log(emit_probs_curr_obs) + max_vector
+    else:
+      new_omega_col = emit_probs_curr_obs * max_vector
     omega = np.append(omega, [new_omega_col], axis=0)
 
   # natural log to the most likely probability when all the input is processeds
-  print(np.log(np.max(omega[-1])))
-
+  if logSpace:
+    print(np.max(omega[-1]))
+  else:
+    print(np.log(np.max(omega[-1])))
 
   # BACKTRACKING
 
@@ -90,8 +117,11 @@ def viterbi_backtrack():
       p_zn1_k = trans_probs[k,z[n+1]]
 
       # add product to max_vector
-      max_vector.append(p_xn1_zn1 * omega_kn * p_zn1_k)
-    
+      if logSpace:
+        max_vector.append(np.log(p_xn1_zn1) + omega_kn + np.log(p_zn1_k))
+      else:
+        max_vector.append(p_xn1_zn1 * omega_kn * p_zn1_k)
+
     # set z[n] to arg max of max_vector
     z[n] = np.argmax(max_vector)
 
@@ -99,9 +129,15 @@ def viterbi_backtrack():
   z = z + 1
   print(z)
 
+def viterbi_logspace_backtrack():
+  viterbi_backtrack(logSpace=True)
+
 
 def main():
+  print("viterbi_backtrack():")
   viterbi_backtrack()
+  print("\nviterbi_logspace_backtrack():")
+  viterbi_logspace_backtrack()
 
 if __name__ == "__main__":
   main()
