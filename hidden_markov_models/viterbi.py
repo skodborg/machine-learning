@@ -41,6 +41,11 @@ emit_probs = np.array([[0.30, 0.25, 0.25, 0.20],
                        [0.15, 0.30, 0.20, 0.35]])
 
 def viterbi_backtrack(logSpace=False):
+  if (logSpace):
+    print("Running viterbi_logspace_backtrack...")
+  else:
+    print("Running viterbi_backtrack...")
+
   # BASIS
   idx_first_obs = observables.get(test_observations[0])
   if logSpace:
@@ -50,6 +55,9 @@ def viterbi_backtrack(logSpace=False):
 
   # RECURSIVE
   for obs in range(1, len(test_observations)):
+
+    if (obs % 100000 is 0):
+      print(obs)
 
     max_vector = []
     # iterating through all states to generate next col in omega
@@ -89,7 +97,9 @@ def viterbi_backtrack(logSpace=False):
   else:
     print(np.log(np.max(omega[-1])))
 
+
   # BACKTRACKING
+  print("Running backtracking...")
 
   N = len(test_observations)-1  # off-by-one correction for indexing into lists
   K = len(states)
@@ -112,7 +122,7 @@ def viterbi_backtrack(logSpace=False):
 
       # our omega table indexing is flipped compared to the pseudocode alg.
       omega_kn = omega[n][k]
-
+ 
       # get transitions from state k to state z[n+1]
       p_zn1_k = trans_probs[k,z[n+1]]
 
@@ -134,9 +144,8 @@ def viterbi_logspace_backtrack():
 
 
 def main():
-  print("viterbi_backtrack():")
-  viterbi_backtrack()
-  print("\nviterbi_logspace_backtrack():")
+  # print("viterbi_backtrack():")
+  # viterbi_backtrack()
   viterbi_logspace_backtrack()
 
 if __name__ == "__main__":
