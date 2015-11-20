@@ -334,6 +334,141 @@ def combined_trans_dict(annotations, genomes):
 	
 	return {**start_codons, **stop_codons, **rev_start_codons, **rev_stop_codons, 'N_N':N_N}
 
+def make_trans_matrix():
+	afile = ['annotation1.fa', 'annotation2.fa', 
+					 'annotation3.fa', 'annotation4.fa', 'annotation5.fa']
+	gfile = ['genome1.fa', 'genome2.fa', 
+					 'genome3.fa', 'genome4.fa', 'genome5.fa']
+
+	trans_probs = np.zeros(43*43).reshape(43,43)
+	
+	trans_dict = combined_trans_dict(afile, gfile)
+
+	# Række = FRA
+	# Kolonne = TIL
+
+	trans_probs[0][0] = trans_dict['N_N']
+	trans_probs[0][1] = trans_dict['N_ATG']
+	trans_probs[0][4] = trans_dict['N_GTG']
+	trans_probs[0][7] = trans_dict['N_TTG']
+	
+	trans_probs[1][2] = 1
+	trans_probs[2][3] = 1
+	trans_probs[4][5] = 1
+	trans_probs[5][6] = 1
+	trans_probs[7][8] = 1
+	trans_probs[8][9] = 1
+	trans_probs[3][10] = 1
+	trans_probs[6][10] = 1
+	trans_probs[9][10] = 1
+	trans_probs[10][11] = 1
+	trans_probs[11][12] = 1
+
+	trans_probs[12][10] = trans_dict['C_C']
+	trans_probs[12][13] = trans_dict['TAG_N']
+	trans_probs[12][16] = trans_dict['TGA_N']
+	trans_probs[12][19] = trans_dict['TAA_N']
+
+	trans_probs[13][14] = 1
+	trans_probs[14][15] = 1
+	trans_probs[15][0] = 1
+	trans_probs[16][17] = 1
+	trans_probs[17][18] = 1
+	trans_probs[18][0] = 1
+	trans_probs[19][20] = 1
+	trans_probs[20][21] = 1
+	trans_probs[21][0] = 1
+
+	trans_probs[0][22] = trans_dict['N_TTA']
+	trans_probs[0][25] = trans_dict['N_CTA']
+	trans_probs[0][28] = trans_dict['N_TCA']
+
+	trans_probs[22][23] = 1
+	trans_probs[23][24] = 1
+	trans_probs[24][31] = 1
+	trans_probs[25][26] = 1
+	trans_probs[26][27] = 1
+	trans_probs[27][31] = 1
+	trans_probs[28][29] = 1
+	trans_probs[29][30] = 1
+	trans_probs[30][31] = 1
+	trans_probs[31][32] = 1
+	trans_probs[32][33] = 1
+
+	trans_probs[33][31] = trans_dict['R_R']
+	trans_probs[33][34] = trans_dict['CAT_N']
+	trans_probs[33][37] = trans_dict['CAC_N']
+	trans_probs[33][40] = trans_dict['CAA_N']
+
+	trans_probs[34][35] = 1
+	trans_probs[35][36] = 1
+	trans_probs[36][0] = 1
+	trans_probs[37][38] = 1
+	trans_probs[38][39] = 1
+	trans_probs[39][0] = 1
+	trans_probs[40][41] = 1
+	trans_probs[41][42] = 1
+	trans_probs[42][0] = 1
+
+	emit_probs = np.zeros(43 * 4).reshape(43, 4)
+	coding_emissions, rev_coding_emissions, N_results = count_emissions(afile, gfile)
+	
+	emit_probs[0] = N_results
+	emit_probs[1] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[2] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[3] = [0.0, 0.0, 1.0, 0.0] # G
+	emit_probs[4] = [0.0, 0.0, 1.0, 0.0] # G
+	emit_probs[5] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[6] = [0.0, 0.0, 1.0, 0.0] # G
+	emit_probs[7] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[8] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[9] = [0.0, 0.0, 1.0, 0.0] # G
+
+	emit_probs[10] = coding_emissions[0]
+	emit_probs[11] = coding_emissions[1]
+	emit_probs[12] = coding_emissions[2]
+
+	emit_probs[13] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[14] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[15] = [0.0, 0.0, 1.0, 0.0] # G
+	emit_probs[16] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[17] = [0.0, 0.0, 1.0, 0.0] # G
+	emit_probs[18] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[19] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[20] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[21] = [1.0, 0.0, 0.0, 0.0] # A
+
+	emit_probs[22] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[23] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[24] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[25] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[26] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[27] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[28] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[29] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[30] = [1.0, 0.0, 0.0, 0.0] # A
+
+	emit_probs[31] = rev_coding_emissions[0]
+	emit_probs[32] = rev_coding_emissions[1]
+	emit_probs[33] = rev_coding_emissions[2]
+
+	emit_probs[34] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[35] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[36] = [0.0, 0.0, 0.0, 1.0] # T
+	emit_probs[37] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[38] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[39] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[40] = [0.0, 1.0, 0.0, 0.0] # C
+	emit_probs[41] = [1.0, 0.0, 0.0, 0.0] # A
+	emit_probs[42] = [1.0, 0.0, 0.0, 0.0] # A
+
+	init_probs = np.zeros(43).astype('float')
+	init_probs[0] = 1.0
+
+
+	return trans_probs, emit_probs, init_probs
+
+
 	
 def main():
 	# count_genome(["lol.txt"])
@@ -344,16 +479,8 @@ def main():
 	# count_genome(annotations)
 
 
-	count_emissions(annotations, genomes)
-
-
-	
-	# count_start_codons(annotations, genomes)
-	# count_stop_codons(annotations, genomes)
-	# count_reverse_stop_codons(annotations, genomes)
-	# count_reverse_start_codons(annotations, genomes)
-
-	# print(combined_trans_dict(annotations, genomes))
+	# count_emissions(annotations, genomes)
+	make_trans_matrix()
 
 
 if __name__ == "__main__":
