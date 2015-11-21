@@ -58,7 +58,7 @@ def count_emissions(annotations, genomes):
 	coding_emissions = [[0.0, 0.0, 0.0, 0.0],
 											[0.0, 0.0, 0.0, 0.0],
 											[0.0, 0.0, 0.0, 0.0]]
-	for i in range(0,5):
+	for i in range(0,len(annotations)):
 		with open(annotations[i], 'r') as a, open(genomes[i], 'r') as g:
 			# remove first line with description in every file
 			a.readline()
@@ -93,7 +93,7 @@ def count_emissions(annotations, genomes):
 	rev_coding_emissions = [[0.0, 0.0, 0.0, 0.0],
 													[0.0, 0.0, 0.0, 0.0],
 													[0.0, 0.0, 0.0, 0.0]]
-	for i in range(0,5):
+	for i in range(0,len(annotations)):
 		with open(annotations[i], 'r') as a, open(genomes[i], 'r') as g:
 			# remove first line with description in every file
 			a.readline()
@@ -145,7 +145,7 @@ def count_stop_codons(annotationfiles, genomefiles):
 	all_stop_codons_dict = {}
 	CCC_sum = 0.0
 
-	for i in range(0,5):
+	for i in range(0,len(annotationfiles)):
 		with open(annotationfiles[i], "r") as annotationfile, \
 				 open(genomefiles[i], "r") as genomefile:
 
@@ -194,7 +194,7 @@ def count_start_codons(annotationfiles, genomefiles):
 	all_start_codons_dict = {}
 	NX_sum = 0.0
 
-	for i in range(0,5):
+	for i in range(0,len(annotationfiles)):
 		with open(annotationfiles[i], "r") as annotationfile, \
 				 open(genomefiles[i], "r") as genomefile:
 
@@ -235,7 +235,7 @@ def count_reverse_stop_codons(annotationfiles, genomefiles):
 	all_rev_stop_codons_dict = {}
 	NX_sum = 0.0
 
-	for i in range(0,5):
+	for i in range(0,len(annotationfiles)):
 		with open(annotationfiles[i], "r") as annotationfile, \
 				 open(genomefiles[i], "r") as genomefile:
 
@@ -276,7 +276,7 @@ def count_reverse_start_codons(annotationfiles, genomefiles):
 	all_rev_start_codons_dict = {}
 	RRR_sum = 0.0
 
-	for i in range(0,5):
+	for i in range(0,len(annotationfiles)):
 		with open(annotationfiles[i], "r") as annotationfile, \
 				 open(genomefiles[i], "r") as genomefile:
 
@@ -334,15 +334,15 @@ def combined_trans_dict(annotations, genomes):
 	
 	return {**start_codons, **stop_codons, **rev_start_codons, **rev_stop_codons, 'N_N':N_N}
 
-def make_trans_matrix():
-	afile = ['annotation1.fa', 'annotation2.fa', 
-					 'annotation3.fa', 'annotation4.fa', 'annotation5.fa']
-	gfile = ['genome1.fa', 'genome2.fa', 
-					 'genome3.fa', 'genome4.fa', 'genome5.fa']
+def get_trained_matrices(annotationfiles, genomefiles):
+	# annotationfiles = ['annotation1.fa', 'annotation2.fa', 
+	# 				 					 'annotation3.fa', 'annotation4.fa', 'annotation5.fa']
+	# genomefiles = ['genome1.fa', 'genome2.fa', 
+	# 				 			 'genome3.fa', 'genome4.fa', 'genome5.fa']
 
 	trans_probs = np.zeros(43*43).reshape(43,43)
 	
-	trans_dict = combined_trans_dict(afile, gfile)
+	trans_dict = combined_trans_dict(annotationfiles, genomefiles)
 
 	# Række = FRA
 	# Kolonne = TIL
@@ -428,7 +428,7 @@ def make_trans_matrix():
 
 
 	emit_probs = np.zeros(43 * 4).reshape(43, 4)
-	coding_emissions, rev_coding_emissions, N_results = count_emissions(afile, gfile)
+	coding_emissions, rev_coding_emissions, N_results = count_emissions(annotationfiles, genomefiles)
 	
 	emit_probs[0] = N_results
 	emit_probs[1] = [1.0, 0.0, 0.0, 0.0] # A
@@ -497,7 +497,7 @@ def main():
 
 
 	# count_emissions(annotations, genomes)
-	make_trans_matrix()
+	get_trained_matricesannotationfiles, genomefiles()
 
 
 if __name__ == "__main__":
