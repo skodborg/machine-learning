@@ -410,6 +410,23 @@ def make_trans_matrix():
 	trans_probs[41][42] = 1
 	trans_probs[42][0] = 1
 
+
+	# print("Transitions not zero or one")
+	# it = np.nditer(trans_probs, flags=['multi_index'])
+	# while not it.finished:
+	# 	if (it[0] > 0 and it[0] < 1):
+	# 		print("<%s> %f" % (it.multi_index, it[0]*100), "%")
+	# 	it.iternext()
+
+	# print()
+	# print("All one transitions")
+	# it = np.nditer(trans_probs, flags=['multi_index'])
+	# while not it.finished:
+	# 	if (it[0] == 1):
+	# 		print("<%s> %f" % (it.multi_index, it[0]))
+	# 	it.iternext()
+
+
 	emit_probs = np.zeros(43 * 4).reshape(43, 4)
 	coding_emissions, rev_coding_emissions, N_results = count_emissions(afile, gfile)
 	
