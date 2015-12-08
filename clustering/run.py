@@ -18,29 +18,36 @@ import matplotlib.pyplot as plt
 
 
 def evaluate(ax, name, data, predicted, labels):
-    F_individual, F_overall, contingency = f1(predicted, labels)
+    # F_individual, F_overall, contingency = f1(predicted, labels)
     s = silhouette(data, predicted)
-    print("%s F1=%s" % (name, F_overall,))
+
+    # print("%s F1=%s" % (name, F_overall,))
     plot_silhouette(ax, s, predicted, label=name)
 
 
 def main():
     data, labels = load_iris_pca()
+    # data = (np.arange(1,10) % 4).reshape(3,3)
+    # predicted = np.array([1,1,1])
+    # silhouette(data, predicted)
+
     k = np.max(labels) + 1
-    while True:
-        fig, ax = plt.subplots()
+    fixed_mean = np.array([[-3.59, 0.25],[-1.09,-0.46],[0.75,1.07]])
+    mean, cov, prior = em(data, k, 1e-8, mean=fixed_mean)
+    # while True:
+    #     fig, ax = plt.subplots()
 
-        centers = kmeans(data, k, 1e-20)
-        predicted = closest(data, centers)
+    #     centers = kmeans(data, k, 1e-20)
+    #     predicted = closest(data, centers)
 
-        evaluate(ax, 'K-means', data, predicted, labels)
+    #     evaluate(ax, 'K-means', data, predicted, labels)
 
-        mean, cov, prior = em(data, k, 1e-8)
-        predicted = most_likely(data, mean, cov, prior)
+    #     mean, cov, prior = em(data, k, 1e-8)
+    #     predicted = most_likely(data, mean, cov, prior)
 
-        evaluate(ax, 'EM', data, predicted, labels)
+    #     evaluate(ax, 'EM', data, predicted, labels)
 
-        plt.show()
+    #     plt.show()
 
 
 if __name__ == "__main__":

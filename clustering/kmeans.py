@@ -126,7 +126,7 @@ def kmeans(data, k, epsilon):
       centers[i] = centers[i] / rep_list.count(i)
 
     # printing cost to verify implementation (should descend as we iterate)
-    print(kmeans_cost(data, rep, centers))
+    # print(kmeans_cost(data, rep, centers))
     
     # until
     dist = np.sqrt(((centers - old_centers) ** 2).sum(axis=1))
@@ -135,14 +135,14 @@ def kmeans(data, k, epsilon):
   return centers
 
 def main():
-  # mydata = (np.arange(1,13) % 5).reshape(4,3).astype(np.float)
+  mydata = (np.arange(1,13) % 5).reshape(4,3).astype(np.float)
   # mycenters = np.array([1,1.5,1,3,3,3,4,2,1]).reshape(3,3)
   # rep = closest(mydata, mycenters)
-  # kmeans(mydata, 3, 1)
+  kmeans(mydata, 3, 1)
 
-  data, labels = load_iris_pca()
-  k = np.max(labels) + 1
-  print(kmeans(data, k, 1e-20))
+  # data, labels = load_iris_pca()
+  # k = np.max(labels) + 1
+  # print(kmeans(data, k, 1e-20))
   # Why are means pos/neg flipped compared to books results?
 
 
