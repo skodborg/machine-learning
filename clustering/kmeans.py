@@ -33,7 +33,7 @@ def closest(data, centers):
   k, d_ = centers.shape
   assert d == d_
 
-  result = np.zeros(n)
+  result = np.zeros(n).astype('int')
   for i, p in enumerate(data):
     curr_min_dist = np.float('inf')
     corresponding_idx = 0
