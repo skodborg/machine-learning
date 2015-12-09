@@ -80,7 +80,7 @@ def kmeans_cost(data, rep, centers):
     cost += distance
 
   return cost
-
+  
 
 
 def kmeans(data, k, epsilon):
@@ -112,8 +112,6 @@ def kmeans(data, k, epsilon):
   while not tired:
     old_centers = np.copy(centers)
 
-    # TODO
-
     # assign x_j to closest centroid
     rep = closest(data, centers)
 
@@ -133,18 +131,3 @@ def kmeans(data, k, epsilon):
     tired = np.max(dist) <= epsilon
 
   return centers
-
-def main():
-  mydata = (np.arange(1,13) % 5).reshape(4,3).astype(np.float)
-  # mycenters = np.array([1,1.5,1,3,3,3,4,2,1]).reshape(3,3)
-  # rep = closest(mydata, mycenters)
-  kmeans(mydata, 3, 1)
-
-  # data, labels = load_iris_pca()
-  # k = np.max(labels) + 1
-  # print(kmeans(data, k, 1e-20))
-  # Why are means pos/neg flipped compared to books results?
-
-
-if __name__ == "__main__":
-  main()

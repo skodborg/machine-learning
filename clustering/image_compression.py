@@ -15,7 +15,7 @@ from kmeans import kmeans, closest
 
 
 def daimi_kmeans(k=4):
-    im = scipy.ndimage.imread('DAIMI_AU_small.png') / 255
+    im = scipy.ndimage.imread('AU_main_back_small.png') / 255
     height, width, depth = im.shape
 
     data = im.reshape((height * width, depth))

@@ -124,12 +124,7 @@ def em(points, k, epsilon, mean=None, f=None):
     # Initialize and validate mean
     if mean is None:
         # Randomly pick k points
-        # TODO
         mean = points[np.random.choice(np.arange(0, len(points)), k, replace=False)]
-        print("mean:")
-        print(mean)
-        print("----------")
-        # DONE
 
     # Validate input
     mean = np.asarray(mean)
@@ -138,44 +133,28 @@ def em(points, k, epsilon, mean=None, f=None):
     assert d == d_
 
     # Initialize cov, prior
-    # TODO
     prior = np.ones(k)/k
-    print("prior:")
-    print(prior)
-    print("----------")
     cov = []
     for _ in range(0,k):
         cov.append(np.identity(d))
     cov = np.array(cov)
-    print("cov:")
-    print(cov)
-    print("----------")
-    # DONE
 
     tired = False
-    counter = 0
     while not tired:
         old_mean = mean
         if f:
             f(mean, cov, prior)
 
         # Expectation step
-        # TODO
         posterior = pdf(points, mean, cov, prior)
-        # print("posterior")
-        # print(posterior)
-        # print("----------")
-        # DONE
 
         # Maximization step
-        # TODO
         for i in range(0,k):
             # reestimate mean
             weightedpointsum = 0.0
             for j, s in enumerate(posterior[:,i]):
                 weightedpointsum += s * points[j]
             weightsum = np.sum(posterior[:,i])
-            print("WEIGHTSUM: %s" % weightsum)
             mean[i] = weightedpointsum / weightsum
 
             # reestimate covariance matrix
@@ -186,37 +165,15 @@ def em(points, k, epsilon, mean=None, f=None):
 
             # reestimate priors
             prior[i] = weightsum / n
-        # DONE
-        # print("mean:")
-        # print(mean)
-        # print("----------")
-        # print("cov:")
-        # print(cov)
-        # print("----------")
-        # print("prior:")
-        # print(prior)
-        # print("----------")
-
 
         # Finish condition
         dist = np.sqrt(((mean - old_mean) ** 2).sum(axis=1))
-        counter += 1
-        if counter == 36:
-            tired = True
-        # tired = np.max(dist < epsilon)
+        tired = np.max(dist < epsilon)
 
 
     # Validate output
     assert mean.shape == (k, d)
     assert cov.shape == (k, d, d)
     assert prior.shape == (k,)
-    print("mean:")
-    print(mean)
-    print("----------")
-    print("cov:")
-    print(cov)
-    print("----------")
-    print("prior:")
-    print(prior)
-    print("----------")
+    
     return mean, cov, prior
