@@ -29,8 +29,8 @@ def main():
     data, labels = load_iris_pca()
 
     k = np.max(labels) + 1
-    fixed_mean = np.array([[-3.59, 0.25],[-1.09,-0.46],[0.75,1.07]])
-    mean, cov, prior = em(data, k, 1e-8, mean=fixed_mean)
+    # fixed_mean = np.array([[-3.59, 0.25],[-1.09,-0.46],[0.75,1.07]])
+    mean, cov, prior = em(data, k, 1e-8)
     count = 0
     running = True
     while running:
