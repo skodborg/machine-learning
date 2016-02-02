@@ -15,6 +15,7 @@ from load_and_show_iris import load_iris, load_iris_pca
 from em import most_likely, em
 from kmeans import kmeans, closest
 import matplotlib.pyplot as plt
+import plotmatrix as pm
 
 
 def evaluate(ax, name, data, predicted, labels):
@@ -27,6 +28,10 @@ def evaluate(ax, name, data, predicted, labels):
 
 def main():
     data, labels = load_iris_pca()
+    # data, labels = load_iris()
+
+    pm.plot_groups(data, labels).show()
+    # pm.plot_matrix(data, data, labels).show()
 
     k = np.max(labels) + 1
     # fixed_mean = np.array([[-3.59, 0.25],[-1.09,-0.46],[0.75,1.07]])
@@ -37,18 +42,25 @@ def main():
         fig, ax = plt.subplots()
 
         centers = kmeans(data, k, 1e-20)
+        print(centers)
         predicted = closest(data, centers)
+
+        pm.plot_groups(data, predicted).show()
+        # pm.plot_matrix(data, data, predicted).show()
 
         evaluate(ax, 'K-means', data, predicted, labels)
 
         mean, cov, prior = em(data, k, 1e-8)
         predicted = most_likely(data, mean, cov, prior)
 
+        pm.plot_groups(data, predicted).show()
+        # pm.plot_matrix(data, data, predicted).show()
+
         evaluate(ax, 'EM', data, predicted, labels)
 
         plt.show()
         count += 1
-        if count > 10:
+        if count > 1:
             running = False
 
 

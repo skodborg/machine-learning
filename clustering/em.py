@@ -10,6 +10,8 @@ import numpy as np
 from numpy.linalg import LinAlgError
 from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt
+from f1 import f1
+import kmeans as km
 
 
 def pdf(points, mean, cov, prior):
@@ -125,6 +127,16 @@ def em(points, k, epsilon, mean=None, f=None):
     if mean is None:
         # Randomly pick k points
         mean = points[np.random.choice(np.arange(0, len(points)), k, replace=False)]
+        # Use best K-means centers as initial means with 2-dim iris data
+        mean = np.array([[ 0.68549571,  0.31905551],
+                         [-2.69473547, -0.19440812],
+                         [ 2.43856214, -0.26855103]])
+        # Use best K-means centers as initial means with 4-dim iris data
+        # mean = np.array([[ 7.13548387, 3.2,        6.03548387, 2.2       ],
+        #                  [ 5.10816327, 3.4877551,  1.49387755, 0.24897959],
+        #                  [ 6.04477612, 2.80597015, 4.52985075, 1.48358209]])
+
+
 
     # Validate input
     mean = np.asarray(mean)
